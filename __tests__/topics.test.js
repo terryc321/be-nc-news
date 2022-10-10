@@ -14,6 +14,11 @@ beforeAll(() => {
 });
 
 describe("Topics api testing", () => {
+
+  test("Not a route /notARoute", () => {
+    return request(app).get("/notARoute").expect(404);
+  });
+
     
   test("GET the status of /api/topics", () => {
     return request(app).get("/api/topics").expect(200);

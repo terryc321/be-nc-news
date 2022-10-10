@@ -8,6 +8,9 @@ app.use(express.json());
 
 app.get("/api/topics", getTopics);
 
+
+
+
 app.use((err, req, res, next) => {
   if (err.status) {
     res.status(err.status).send({ err });
