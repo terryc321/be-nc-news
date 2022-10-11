@@ -99,7 +99,7 @@ describe("Articles api testing", () => {
           .expect(400)
           .then(({ body }) => {
               const { msg } = body;
-              expect(msg).toBe('Invalid id');
+              expect(msg.startsWith('error: invalid input syntax for type integer')).toBe(true);
           }); 
   });  
    
@@ -139,10 +139,76 @@ describe("Users api testing", () => {
           expect(users[0].username).toBe('butter_bridge');
           expect(users[0].name).toBe('jonny');
           expect(users[0].avatar_url).toBe('https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg');
-          
       });
-  });
+  });   
+});
 
+
+
+describe('Testing PATCH /api/articles/:article_id', () => {
+    test('status:201, responds with the updated article', () => {
+        const articleUpdate = {
+            inc_votes: 100
+        };
+        let original_votes;
+
+        return request(app)
+            .get("/api/articles/1")
+            .expect(200)
+            .then(({ body }) => {
+                const { article } = body;
+                expect(article.article_id).toBe(1);
+                original_votes = article.votes;
+            }).then(() => {
+                
+                return request(app)
+                    .patch('/api/articles/1')
+                    .send(articleUpdate)
+                    .expect(201)
+                    .then(({ body }) => {
+                        const { article } = body;
+                
+                        const incremented_votes = original_votes + articleUpdate.inc_votes;
+                        expect(article.article_id).toBe(1);
+                        expect(article.votes).toBe(incremented_votes);
+                        
+                    });
+            });
+    });
+
+    test('status:400, bad request on invalid article_id', () => {
+        const articleUpdate = {
+            inc_votes: 100
+        };
+        return request(app)
+            .patch('/api/articles/dog')
+            .send(articleUpdate)
+            .expect(400);
+    });
+
+    test('status:400, bad article update object inc_votes not a number', () => {
+        const articleUpdate = {
+            inc_votes: "dog"
+        };
+        return request(app)
+            .patch('/api/articles/1')
+            .send(articleUpdate)
+            .expect(400);
+    });
+
+    test('status:400, bad article update object inc_votes mis-spelled', () => {
+        const articleUpdate = {
+            inc_voters: 250
+        };
+        return request(app)
+            .patch('/api/articles/1')
+            .send(articleUpdate)
+            .expect(400)
+            .then(({ body }) => {
+                const { msg } = body;
+                expect(msg).toBe("patch request requires 'inc_votes' json to be defined");
+            });;
+    });
     
 });
 
