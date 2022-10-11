@@ -72,7 +72,7 @@ describe("Articles api testing", () => {
       .then(({ body }) => {
         const { article } = body;
           expect(article).toMatchObject({
-            article_id: expect.any(Number),
+            article_id: 1, 
               title: expect.any(String),
               topic: expect.any(String),
               author: expect.any(String),
