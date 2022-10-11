@@ -99,7 +99,7 @@ describe("Articles api testing", () => {
           .expect(400)
           .then(({ body }) => {
               const { msg } = body;
-              expect(msg).toBe('Invalid id');
+              expect(msg.startsWith('error: invalid input syntax for type integer')).toBe(true);
           }); 
   });  
    
@@ -175,5 +175,17 @@ describe('Testing PATCH /api/articles/:article_id', () => {
                     });
             });
     });
+
+    test('status:400, bad request on invalid id', () => {
+        const articleUpdate = {
+            inc_votes: 100
+        };
+        let original_votes;
+        return request(app)
+            .patch('/api/articles/dog')
+            .send(articleUpdate)
+            .expect(400);
+    });
+    
 });
 

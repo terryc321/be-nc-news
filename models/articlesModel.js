@@ -28,6 +28,8 @@ const adjustArticle = (article_id, inc_votes) => {
     )
     .then(({ rows }) => {
       return rows[0];
+    }).catch((err) => {
+        return Promise.reject(err);
     });
 };
 
