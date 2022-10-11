@@ -79,9 +79,32 @@ describe("Articles api testing", () => {
               body: expect.any(String),
               created_at: expect.any(String),
               votes: expect.any(Number),
+              comment_count: 11,
           });        
       });
   });
+
+    // test all article_id's from 1 through 12 using loop
+    for (let article_id = 1 ; article_id < 13 ; article_id ++ ) {
+        test(`GET the response and status of /api/articles/:article_id with article_id = ${article_id}`, () => {
+            return request(app)
+                .get(`/api/articles/${article_id}`)
+                .expect(200)
+                .then(({ body }) => {
+                    const { article } = body;
+                    expect(article).toMatchObject({
+                        article_id: article_id,
+                        title: expect.any(String),
+                        topic: expect.any(String),
+                        author: expect.any(String),
+                        body: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        comment_count: expect.any(Number),
+                    });
+                });
+        });
+    }
 
   test("Get article_id is a number but not in database", () => {
     return request(app)
