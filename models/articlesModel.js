@@ -2,7 +2,18 @@ const db = require("../db/connection");
 
 const fetchArticle = (article_id) => {
   return db
-    .query("SELECT * FROM articles WHERE article_id = $1;", [article_id])
+    .query(`SELECT articles.article_id  ,
+       articles.author ,
+       articles.title ,
+       articles.body ,
+       articles.topic ,
+       articles.created_at ,
+       articles.votes ,
+       CAST(COUNT(comments.article_id) AS INT) AS comment_count 
+       FROM comments RIGHT JOIN articles
+       ON comments.article_id = articles.article_id
+       WHERE articles.article_id = $1
+       GROUP BY articles.article_id;`, [article_id])
     .then(({ rows: articles }) => {
       if (articles.length < 1) {
         return Promise.reject({
