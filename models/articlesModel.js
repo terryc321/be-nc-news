@@ -8,8 +8,8 @@ const fetchArticle = (article_id) => {
     .query("SELECT * FROM articles WHERE article_id = $1;", [article_id])
     .then(({ rows: articles }) => {
         if (articles.length < 1) {
-            // 204 disgards body of response
-        return Promise.reject({ status: 204, msg: "Article not found for article_id given" });
+            // 404 unsuccessful request
+        return Promise.reject({ status: 404, msg: "Article not found for article_id given" });
       }
       return articles[0];
     });

@@ -86,7 +86,11 @@ describe("Articles api testing", () => {
   test("Get article_id is a number but not in database", () => {
     return request(app)
       .get("/api/articles/13")
-          .expect(204); // 204 no content
+          .expect(404)
+          .then(({ body }) => {
+              const { msg } = body;
+              expect(msg).toBe('Article not found for article_id given');
+          });
   });
 
   test("Get invalid article_id - should be a number", () => {
