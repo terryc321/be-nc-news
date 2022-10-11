@@ -13,7 +13,7 @@ beforeAll(() => {
   return seed(testData);
 });
 
-describe("Topics api testing", () => {
+xdescribe("Topics api testing", () => {
   test("Not a route /notARoute", () => {
     return request(app).get("/notARoute").expect(404);
   });
@@ -60,7 +60,7 @@ describe("Topics api testing", () => {
   });
 });
 
-describe("Articles api testing", () => {
+xdescribe("Articles api testing", () => {
   test("GET the status of /api/articles/1", () => {
     return request(app).get("/api/articles/1").expect(200);
   });
@@ -107,7 +107,7 @@ describe("Articles api testing", () => {
 
 
 
-describe("Users api testing", () => {
+xdescribe("Users api testing", () => {
   test("GET the status of /api/users", () => {
     return request(app).get("/api/users").expect(200);
   });
@@ -147,7 +147,7 @@ describe("Users api testing", () => {
 
 
 
-describe("Articles api testing /api/articles ", () => {
+xdescribe("Articles api testing /api/articles ", () => {
   test("GET the status of /api/articles", () => {
     return request(app).get("/api/articles").expect(200);
   });
@@ -161,9 +161,13 @@ describe("Articles api testing /api/articles ", () => {
           
         articles.forEach((article) => {
           expect(article).toMatchObject({
-            articlename: expect.any(String),
-            name: expect.any(String),
-            avatar_url: expect.any(String),
+            article_id: expect.any(Number),
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
           });
         });
       });
