@@ -18,6 +18,9 @@ const fetchArticle = (article_id) => {
 };
 
 const adjustArticle = (article_id, inc_votes) => {
+    if(inc_votes === undefined){
+        return Promise.reject({status : 400 , msg : "patch request requires 'inc_votes' json to be defined"});
+    }
   return db
     .query(
       `UPDATE articles

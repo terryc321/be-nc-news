@@ -176,15 +176,38 @@ describe('Testing PATCH /api/articles/:article_id', () => {
             });
     });
 
-    test('status:400, bad request on invalid id', () => {
+    test('status:400, bad request on invalid article_id', () => {
         const articleUpdate = {
             inc_votes: 100
         };
-        let original_votes;
         return request(app)
             .patch('/api/articles/dog')
             .send(articleUpdate)
             .expect(400);
+    });
+
+    test('status:400, bad article update object inc_votes not a number', () => {
+        const articleUpdate = {
+            inc_votes: "dog"
+        };
+        return request(app)
+            .patch('/api/articles/1')
+            .send(articleUpdate)
+            .expect(400);
+    });
+
+    test('status:400, bad article update object inc_votes mis-spelled', () => {
+        const articleUpdate = {
+            inc_voters: 250
+        };
+        return request(app)
+            .patch('/api/articles/1')
+            .send(articleUpdate)
+            .expect(400)
+            .then(({ body }) => {
+                const { msg } = body;
+                expect(msg).toBe("patch request requires 'inc_votes' json to be defined");
+            });;
     });
     
 });
