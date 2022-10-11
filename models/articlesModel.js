@@ -49,9 +49,20 @@ const adjustArticle = (article_id, inc_votes) => {
 
 
 const fetchArticles = () => {
-  return db.query("SELECT * FROM articles;").then(({ rows: articles }) => {
-    return articles;
-  });
+    return db.query(`SELECT articles.article_id  ,
+       articles.author ,
+       articles.title ,
+       articles.topic ,
+       articles.created_at ,
+       articles.votes ,
+       articles.body , 
+       CAST(COUNT(comments.article_id) AS INT) AS comment_count 
+       FROM comments RIGHT JOIN articles
+       ON comments.article_id = articles.article_id
+       GROUP BY articles.article_id
+       ORDER BY articles.created_at DESC;`).then(({ rows: articles }) => {
+        return articles;
+       });
 };
 
 
