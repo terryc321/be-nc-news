@@ -101,8 +101,94 @@ describe("Articles api testing", () => {
               const { msg } = body;
               expect(msg).toBe('Invalid id');
           }); 
+  });  
+   
+});
+
+
+describe("Topics api testing", () => {
+  test("Not a route /notARoute", () => {
+    return request(app).get("/notARoute").expect(404);
+  });
+
+  test("GET the status of /api/topics", () => {
+    return request(app).get("/api/topics").expect(200);
+  });
+
+  test("GET the response and status of /api/topics", () => {
+    return request(app)
+      .get("/api/topics")
+      .expect(200)
+      .then(({ body }) => {
+        const { topics } = body;
+
+        expect(topics).toBeInstanceOf(Array);
+        topics.forEach((topic) => {
+          expect(topic).toMatchObject({
+            slug: expect.any(String),
+            description: expect.any(String),
+          });
+        });
+      });
+  });
+
+  test("get exact response from /api/topics", () => {
+    return request(app)
+      .get("/api/topics")
+      .expect(200)
+      .then(({ body }) => {
+        const { topics } = body;
+
+        expect(topics).toBeInstanceOf(Array);
+        expect(topics).toHaveLength(3);
+
+        expect(topics[0].slug).toBe("mitch");
+        expect(topics[1].slug).toBe("cats");
+        expect(topics[2].slug).toBe("paper");
+
+        expect(topics[0].description).toBe("The man, the Mitch, the legend");
+        expect(topics[1].description).toBe("Not dogs");
+        expect(topics[2].description).toBe("what books are made of");
+      });
+  });
+});
+
+describe("Users api testing", () => {
+  test("GET the status of /api/users", () => {
+    return request(app).get("/api/users").expect(200);
+  });
+
+  test("GET the response and status of /api/users", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const { users } = body;
+          
+        users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+
+  test("check first user information in test database", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const { users } = body;
+
+          expect(users[0].username).toBe('butter_bridge');
+          expect(users[0].name).toBe('jonny');
+          expect(users[0].avatar_url).toBe('https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg');
+          
+      });
   });
 
     
-    
 });
+

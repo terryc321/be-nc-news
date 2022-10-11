@@ -4,11 +4,14 @@ const { getTopics } = require("./controllers/topicsController");
 
 const { getArticle } = require("./controllers/articlesController");
 
+const { getUsers } = require("./controllers/usersController");
+
 const app = express();
 app.use(express.json());
 
 app.get("/api/topics", getTopics);
 app.get("/api/articles/:article_id", getArticle);
+app.get("/api/users", getUsers);
 
 app.use((err, req, res, next) => {
   if (err.code === '22P02') {
