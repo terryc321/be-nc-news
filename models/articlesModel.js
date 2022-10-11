@@ -17,6 +17,13 @@ const fetchArticle = (article_id) => {
     });
 };
 
+const fetchArticles = () => {
+  return db.query("SELECT * FROM articles;").then(({ rows: articles }) => {
+    return articles;
+  });
+};
+
+
 module.exports = {
-  fetchArticle,
+  fetchArticle, fetchArticles
 };

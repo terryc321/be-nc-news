@@ -142,6 +142,46 @@ describe("Users api testing", () => {
           
       });
   });
+   
+});
+
+
+
+describe("Articles api testing /api/articles ", () => {
+  test("GET the status of /api/articles", () => {
+    return request(app).get("/api/articles").expect(200);
+  });
+
+  test("GET the response and status of /api/articles", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+          
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            articlename: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+
+  test("check first article information in test database", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+
+          expect(articles[0].articlename).toBe('butter_bridge');
+          expect(articles[0].name).toBe('jonny');
+          expect(articles[0].avatar_url).toBe('https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg');
+          
+      });
+  });
 
     
 });
