@@ -48,6 +48,13 @@ const adjustArticle = (article_id, inc_votes) => {
 };
 
 
+const fetchArticles = () => {
+  return db.query("SELECT * FROM articles;").then(({ rows: articles }) => {
+    return articles;
+  });
+};
+
+
 module.exports = {
-  fetchArticle, adjustArticle
+    fetchArticles , fetchArticle, adjustArticle
 };
