@@ -101,8 +101,48 @@ describe("Articles api testing", () => {
               const { msg } = body;
               expect(msg).toBe('Invalid id');
           }); 
+  });  
+   
+});
+
+
+
+describe("Users api testing", () => {
+  test("GET the status of /api/users", () => {
+    return request(app).get("/api/users").expect(200);
+  });
+
+  test("GET the response and status of /api/users", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const { users } = body;
+          
+        users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+
+  test("check first user information in test database", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const { users } = body;
+
+          expect(users[0].username).toBe('butter_bridge');
+          expect(users[0].name).toBe('jonny');
+          expect(users[0].avatar_url).toBe('https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg');
+          
+      });
   });
 
     
-    
 });
+
