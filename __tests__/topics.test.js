@@ -99,7 +99,7 @@ describe("Articles api testing", () => {
           .expect(400)
           .then(({ body }) => {
               const { msg } = body;
-              expect(msg).toBe('Invalid article_id query');
+              expect(msg).toBe('Invalid id');
           }); 
   });
 
