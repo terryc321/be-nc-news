@@ -96,7 +96,11 @@ describe("Articles api testing", () => {
   test("Get invalid article_id - should be a number", () => {
     return request(app)
       .get("/api/articles/dog")
-          .expect(400); // 400 bad request
+          .expect(400)
+          .then(({ body }) => {
+              const { msg } = body;
+              expect(msg).toBe('Invalid article_id query');
+          }); 
   });
 
     
