@@ -66,6 +66,25 @@ const fetchArticles = () => {
 };
 
 
+const fetchComments = () => {
+    return db.query(`SELECT comments.article_id  ,
+       comments.author ,
+       comments.title ,
+       comments.topic ,
+       comments.created_at ,
+       comments.votes ,
+       comments.body , 
+       CAST(COUNT(comments.article_id) AS INT) AS comment_count 
+       FROM comments RIGHT JOIN comments
+       ON comments.article_id = comments.article_id
+       GROUP BY comments.article_id
+       ORDER BY comments.created_at DESC;`).then(({ rows: comments }) => {
+        return comments;
+       });
+};
+
+
+
 module.exports = {
-    fetchArticles , fetchArticle, adjustArticle
+    fetchArticles , fetchArticle, adjustArticle , fetchComments
 };
