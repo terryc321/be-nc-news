@@ -332,3 +332,22 @@ describe("Comments testing /api/articles/:article_id/comments ", () => {
     });
 
 });
+
+
+describe('POST /api/articles/:article_id/comments', () => {
+    test('status:201, responds with new comment added to database', () => {
+        const newComment = {
+            username: 'butter_bridge',
+            body: "He was the only member of the club who didn't like plum pudding.",
+        };
+        return request(app)
+            .post('/api/articles/2/comments')
+            .send(newComment)
+            .expect(201)
+            .then(({ body }) => {
+                expect(body.comment.body).toEqual("He was the only member of the club who didn't like plum pudding.");
+                expect(body.comment.author).toEqual('butter_bridge');
+            });
+    });
+});
+
