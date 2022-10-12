@@ -66,20 +66,23 @@ const fetchArticles = () => {
 };
 
 
-const fetchComments = () => {
-    return db.query(`SELECT comments.article_id  ,
-       comments.author ,
-       comments.title ,
-       comments.topic ,
-       comments.created_at ,
-       comments.votes ,
-       comments.body , 
-       CAST(COUNT(comments.article_id) AS INT) AS comment_count 
-       FROM comments RIGHT JOIN comments
-       ON comments.article_id = comments.article_id
-       GROUP BY comments.article_id
-       ORDER BY comments.created_at DESC;`).then(({ rows: comments }) => {
-        return comments;
+const fetchComments = (article_id) => {
+    if(article_id === undefined){
+        return Promise.reject({status : 400 , msg : "fetchComments request requires 'article_id' json to be defined"});
+    }
+    if(isNaN(article_id)){
+        return Promise.reject({status : 400 , msg : "'article_id' in /api/articles/:article_id/comments is expected to be a number"});
+    }
+    
+    return db.query(`SELECT comment_id ,
+                            votes ,
+                            created_at ,
+                            author ,
+                            body                             
+                     FROM comments
+                     WHERE article_id = $1
+                     ORDER BY created_at DESC;`,[article_id]).then(({ rows: comments }) => {
+             return comments;
        });
 };
 

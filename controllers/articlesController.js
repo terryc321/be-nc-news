@@ -24,7 +24,8 @@ const getArticles = (req, res, next) => {
 };
 
 const getComments = (req, res, next) => {
-  fetchComments().then((comments) => res.status(200).send({ comments }))
+  const { article_id } = req.params;    
+  fetchComments(article_id).then((comments) => res.status(200).send({ comments }))
         .catch((err) => next(err));
 };
 

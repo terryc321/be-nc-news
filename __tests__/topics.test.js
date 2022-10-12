@@ -284,3 +284,51 @@ describe("Articles api testing /api/articles ", () => {
     });
 
 });
+
+
+
+describe("Comments testing /api/articles/:article_id/comments ", () => {
+    
+    test("GET the status of article_id 1 /api/articles/1/comments", () => {
+        return request(app).get("/api/articles/1/comments").expect(200);
+    });
+
+    for (let article_id = 1 ; article_id < 13 ; article_id ++ ) {
+        test(`GET the response and status of /api/articles/${article_id}/comments`, () => {
+        return request(app)
+            .get(`/api/articles/${article_id}/comments`)
+            .expect(200)
+            .then(({ body }) => {
+                const { comments } = body;
+
+                expect(comments).toBeSortedBy('created_at', { descending: true });
+
+                comments.forEach((comment) => {
+                    expect(comment).toMatchObject({
+                        comment_id: expect.any(Number),
+                        votes: expect.any(Number),
+                        created_at: expect.any(String),
+                        author: expect.any(String),
+                        body: expect.any(String)
+                    });
+                });
+            });
+    });
+    }
+
+    test("check first comment returned", () => {
+        return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then(({ body }) => {
+                const { comments } = body;
+
+                expect(comments[0].comment_id).toBe(5);
+                expect(comments[0].votes).toBe(0);
+                expect(comments[0].author).toBe('icellusedkars');
+                expect(comments[0].body).toBe('I hate streaming noses');
+                
+            });
+    });
+
+});
