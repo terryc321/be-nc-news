@@ -235,3 +235,52 @@ describe('Testing PATCH /api/articles/:article_id', () => {
     
 });
 
+
+
+describe("Articles api testing /api/articles ", () => {
+    
+    test("GET the status of /api/articles", () => {
+        return request(app).get("/api/articles").expect(200);
+    });
+
+    test("GET the response and status of /api/articles", () => {
+        return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                
+                expect(articles).toBeSortedBy('created_at', { descending: true });
+
+                articles.forEach((article) => {
+                    expect(article).toMatchObject({
+                        article_id: expect.any(Number),
+                        title: expect.any(String),
+                        topic: expect.any(String),
+                        author: expect.any(String),
+                        body: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        comment_count: expect.any(Number),
+                    });
+                });
+            });
+    });
+
+    test("check first article returned", () => {
+        return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+
+                expect(articles[0].title).toBe('Eight pug gifs that remind me of mitch');
+                expect(articles[0].author).toBe('icellusedkars');
+                expect(articles[0].topic).toBe('mitch');
+                expect(articles[0].votes).toBe(0);
+                expect(articles[0].comment_count).toBe(2);
+
+            });
+    });
+
+});
