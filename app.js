@@ -43,6 +43,9 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+    console.log("error = " , err.toString());
+    console.log("error = " , err);
+    
   res.status(500).send({ err: err.msg });
 });
 
