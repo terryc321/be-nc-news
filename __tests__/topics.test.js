@@ -345,8 +345,14 @@ describe('POST /api/articles/:article_id/comments', () => {
             .send(newComment)
             .expect(201)
             .then(({ body }) => {
-                expect(body.comment.body).toEqual("He was the only member of the club who didn't like plum pudding.");
-                expect(body.comment.author).toEqual('butter_bridge');
+                const { comment } = body;
+                expect(comment).toMatchObject({
+                    body: "He was the only member of the club who didn't like plum pudding.",
+                    author: "butter_bridge",
+                    comment_id: expect.any(Number),
+                    votes: expect.any(Number),
+                    created_at: expect.any(String),
+                });
             });
     });
 });
