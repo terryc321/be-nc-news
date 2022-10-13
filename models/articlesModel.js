@@ -112,16 +112,33 @@ const sql_sanitize = (str = "") => {
 
 
 const putComment = (article_id, newComment) => {
+    if (article_id === undefined) {
+        return Promise.reject({ status: 400, msg: `The ':article_id' is undefined in POST request to /api/articles/:article_id/comments` });
+    }
+    if (isNaN(article_id)) {
+        return Promise.reject({ status: 400, msg: `The ':article_id' should be a number in request POST /api/articles/:article_id/comments` });
+    }
+    
     const { username, body } = newComment;
-    return db.query(`INSERT INTO comments
+    return db.query(`SELECT *               
+                     FROM articles
+                     WHERE article_id = $1;`, [article_id]).then(
+        ({ rows: articles }) => {
+            if (articles.length < 1) {
+                return Promise.reject({ status: 400, msg: `There is no article with 'article_id' of ${article_id} in POST /api/articles/:article_id/comments` });
+            }
+        }).then(() => {
+            return db.query(`INSERT INTO comments
                                    ( author , body , article_id)
                        VALUES ($1 , $2 , $3)
                        RETURNING *;`, [username, body, article_id]).then(({ rows }) => {
-        return rows[0];
-    }).catch((err) => {
-        return Promise.reject(err);
-    });
+                return rows[0];
+            }).catch((err) => {
+                return Promise.reject(err);
+            });
+        });
 };
+                                
 
 
 

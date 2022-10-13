@@ -406,7 +406,7 @@ describe('POST /api/articles/:article_id/comments', () => {
             });
     });
 
-    xtest('POST article_id does not exist', () => {
+    test('POST article_id does not exist', () => {
 
         const newComment = {
             username: "butter_bridge",
@@ -418,21 +418,32 @@ describe('POST /api/articles/:article_id/comments', () => {
             .post(`/api/articles/${article_id}/comments`)
             .send(newComment)
             .expect(400)
-            .then(({ msg }) => {
-                console.log("msg = " , msg);
-                
-                // const { comment } = body;
-                // expect(comment).toMatchObject({
-                //     body: msg,
-                //     author: username,
-                //     comment_id: expect.any(Number),
-                //     votes: expect.any(Number),
-                //     created_at: expect.any(String),
-                // });
+            .then(({ body }) => {
+                const { msg } = body;
+                expect(msg).toBe(`There is no article with 'article_id' of ${article_id} in POST /api/articles/:article_id/comments`);
             });
     });
-    
+
+
+
+    test('POST article_id is not a number', () => {
+
+        const newComment = {
+            username: "butter_bridge",
+            body: "a comment long long ago",
+        };
+        const article_id = "dog";
+
+        return request(app)
+            .post(`/api/articles/${article_id}/comments`)
+            .send(newComment)
+            .expect(400)
+            .then(({ body }) => {
+                const { msg } = body;
+                expect(msg).toBe(`The ':article_id' should be a number in request POST /api/articles/:article_id/comments`);
+            });
+    });
 
     
 });
-
+    
