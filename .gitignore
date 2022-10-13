@@ -2,4 +2,4 @@ node_modules
 .env.*
 .projectile
 .log/*
-
+hidden
