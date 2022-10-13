@@ -66,10 +66,44 @@ const fetchArticles = (topic = "") => {
        GROUP BY articles.article_id
        ORDER BY articles.created_at DESC;`).then(({ rows: articles }) => {
         return articles;
-       });
+       }).catch((err) => {
+        return Promise.reject(err);
+    });
 };
 
 
+const fetchComments = (article_id) => {
+    if (article_id === undefined) {
+        return Promise.reject({ status: 400, msg: "fetchComments request requires 'article_id' json to be defined" });
+    }
+    if (isNaN(article_id)) {
+        return Promise.reject({ status: 400, msg: "'article_id' in /api/articles/:article_id/comments is expected to be a number" });
+    }
+
+    return db.query(`SELECT *               
+                     FROM articles
+                     WHERE article_id = $1;`, [article_id]).then(({ rows: articles }) => {
+                         if (articles.length < 1) {
+                             return Promise.reject({ status: 400, msg: `There is no article with 'article_id' of ${article_id} in /api/articles/:article_id/comments` });
+                         }
+                     }).then(() => {
+        return db.query(`SELECT comment_id ,
+                            votes ,
+                            created_at ,
+                            author ,
+                            body                             
+                     FROM comments
+                     WHERE article_id = $1
+                     ORDER BY created_at DESC;`, [article_id]).then(({ rows: comments }) => {
+            return comments;
+        });
+    }).catch((err) => {
+        return Promise.reject(err);
+    });
+};
+
+
+
 module.exports = {
-    fetchArticles , fetchArticle, adjustArticle
+    fetchArticles , fetchArticle, adjustArticle , fetchComments
 };

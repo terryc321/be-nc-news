@@ -2,7 +2,11 @@ const express = require("express");
 
 const { getTopics } = require("./controllers/topicsController");
 
-const { getArticles, getArticle , patchArticle } = require("./controllers/articlesController");
+const { getArticles,
+        getArticle ,
+        patchArticle,
+        getComments
+      } = require("./controllers/articlesController");
 
 const { getUsers } = require("./controllers/usersController");
 
@@ -14,6 +18,10 @@ app.get("/api/articles/:article_id", getArticle);
 app.get("/api/users", getUsers);
 app.patch("/api/articles/:article_id" , patchArticle);
 app.get("/api/articles", getArticles);
+app.get("/api/articles/:article_id/comments", getComments);
+
+
+
 
 app.use((err, req, res, next) => {
   if (err.code === '22P02') {
