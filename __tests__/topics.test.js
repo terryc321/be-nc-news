@@ -1,3 +1,4 @@
+
 const request = require("supertest");
 const app = require("../app");
 const pool = require("../db/connection");
@@ -376,3 +377,73 @@ describe("Comments testing /api/articles/:article_id/comments ", () => {
     
 
 });
+
+describe('POST /api/articles/:article_id/comments', () => {
+    test('status:201, responds with new comment added to database', () => {
+
+        const msg = `we are ${Date.now()} seconds since dawn of time`;
+        const username = 'butter_bridge';
+
+        const newComment = {
+            username: username,
+            body: msg,
+        };
+        const article_id = 2;
+
+        return request(app)
+            .post(`/api/articles/${article_id}/comments`)
+            .send(newComment)
+            .expect(201)
+            .then(({ body }) => {
+                const { comment } = body;
+                expect(comment).toMatchObject({
+                    body: msg,
+                    author: username,
+                    comment_id: expect.any(Number),
+                    votes: expect.any(Number),
+                    created_at: expect.any(String),
+                });
+            });
+    });
+
+    test('POST article_id does not exist', () => {
+
+        const newComment = {
+            username: "butter_bridge",
+            body: "a comment long long ago",
+        };
+        const article_id = 15;
+
+        return request(app)
+            .post(`/api/articles/${article_id}/comments`)
+            .send(newComment)
+            .expect(400)
+            .then(({ body }) => {
+                const { msg } = body;
+                expect(msg).toBe(`There is no article with 'article_id' of ${article_id} in POST /api/articles/:article_id/comments`);
+            });
+    });
+
+
+
+    test('POST article_id is not a number', () => {
+
+        const newComment = {
+            username: "butter_bridge",
+            body: "a comment long long ago",
+        };
+        const article_id = "dog";
+
+        return request(app)
+            .post(`/api/articles/${article_id}/comments`)
+            .send(newComment)
+            .expect(400)
+            .then(({ body }) => {
+                const { msg } = body;
+                expect(msg).toBe(`The ':article_id' should be a number in request POST /api/articles/:article_id/comments`);
+            });
+    });
+
+    
+});
+    

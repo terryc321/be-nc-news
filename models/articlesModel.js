@@ -67,8 +67,8 @@ const fetchArticles = (topic = "") => {
        ORDER BY articles.created_at DESC;`).then(({ rows: articles }) => {
         return articles;
        }).catch((err) => {
-        return Promise.reject(err);
-    });
+            return Promise.reject(err);
+       });
 };
 
 
@@ -82,12 +82,13 @@ const fetchComments = (article_id) => {
 
     return db.query(`SELECT *               
                      FROM articles
-                     WHERE article_id = $1;`, [article_id]).then(({ rows: articles }) => {
-                         if (articles.length < 1) {
-                             return Promise.reject({ status: 400, msg: `There is no article with 'article_id' of ${article_id} in /api/articles/:article_id/comments` });
-                         }
-                     }).then(() => {
-        return db.query(`SELECT comment_id ,
+                     WHERE article_id = $1;`, [article_id]).then(
+                         ({ rows: articles }) => {
+                             if (articles.length < 1) {
+                                 return Promise.reject({ status: 400, msg: `There is no article with 'article_id' of ${article_id} in /api/articles/:article_id/comments` });
+                             }
+                         }).then(() => {
+                             return db.query(`SELECT comment_id ,
                             votes ,
                             created_at ,
                             author ,
@@ -95,15 +96,56 @@ const fetchComments = (article_id) => {
                      FROM comments
                      WHERE article_id = $1
                      ORDER BY created_at DESC;`, [article_id]).then(({ rows: comments }) => {
-            return comments;
+                                 return comments;
+                             }).catch((err) => {
+                                 return Promise.reject(err);
+                             });
+                             
+                         });
+}
+
+
+
+const sql_sanitize = (str = "") => {
+    return str.replace(/[^a-z0-9 _-]/gi, '');
+}
+
+
+const putComment = (article_id, newComment) => {
+    if (article_id === undefined) {
+        return Promise.reject({ status: 400, msg: `The ':article_id' is undefined in POST request to /api/articles/:article_id/comments` });
+    }
+    if (isNaN(article_id)) {
+        return Promise.reject({ status: 400, msg: `The ':article_id' should be a number in request POST /api/articles/:article_id/comments` });
+    }
+    
+    const { username, body } = newComment;
+    return db.query(`SELECT *               
+                     FROM articles
+                     WHERE article_id = $1;`, [article_id]).then(
+        ({ rows: articles }) => {
+            if (articles.length < 1) {
+                return Promise.reject({ status: 400, msg: `There is no article with 'article_id' of ${article_id} in POST /api/articles/:article_id/comments` });
+            }
+        }).then(() => {
+            return db.query(`INSERT INTO comments
+                                   ( author , body , article_id)
+                       VALUES ($1 , $2 , $3)
+                       RETURNING *;`, [username, body, article_id]).then(({ rows }) => {
+                return rows[0];
+            }).catch((err) => {
+                return Promise.reject(err);
+            });
         });
-    }).catch((err) => {
-        return Promise.reject(err);
-    });
 };
+                                
 
 
 
 module.exports = {
-    fetchArticles , fetchArticle, adjustArticle , fetchComments
+    fetchArticles ,
+    fetchArticle,
+    adjustArticle ,
+    fetchComments ,
+    putComment
 };

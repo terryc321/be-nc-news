@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6"
+  },
+    "include": ["models/*","controllers/*","app.js"]
+    "exclude": ["node_modules","hidden"]
+}
+
+

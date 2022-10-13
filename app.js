@@ -5,7 +5,8 @@ const { getTopics } = require("./controllers/topicsController");
 const { getArticles,
         getArticle ,
         patchArticle,
-        getComments
+        getComments,
+        postComment,
       } = require("./controllers/articlesController");
 
 const { getUsers } = require("./controllers/usersController");
@@ -19,6 +20,7 @@ app.get("/api/users", getUsers);
 app.patch("/api/articles/:article_id" , patchArticle);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id/comments", getComments);
+app.post("/api/articles/:article_id/comments", postComment);
 
 
 
@@ -41,6 +43,9 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+    console.log("error = " , err.toString());
+    console.log("error = " , err);
+    
   res.status(500).send({ err: err.msg });
 });
 
