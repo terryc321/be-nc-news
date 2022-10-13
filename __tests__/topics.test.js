@@ -249,6 +249,8 @@ describe("Articles api testing /api/articles ", () => {
             .expect(200)
             .then(({ body }) => {
                 const { articles } = body;
+
+                console.log("articles = " , articles);
                 
                 expect(articles).toBeSortedBy('created_at', { descending: true });
 
@@ -332,7 +334,7 @@ describe("Comments testing /api/articles/:article_id/comments ", () => {
     });
 
 
-    xtest("get comments using invalid article_id - should be a number", () => {
+    test("get comments using invalid article_id - should be a number", () => {
         return request(app)
             .get("/api/articles/dog/comments")
             .expect(400)
@@ -342,7 +344,7 @@ describe("Comments testing /api/articles/:article_id/comments ", () => {
             });
     });  
 
-    xtest("get comments using article_id not in database", () => {
+    test("get comments using article_id not in database", () => {
         return request(app)
             .get("/api/articles/15/comments")
             .expect(400)
