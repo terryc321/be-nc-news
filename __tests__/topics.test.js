@@ -283,6 +283,27 @@ describe("Articles api testing /api/articles ", () => {
             });
     });
 
+    test("topic of cooking - articles should only involve cooking", () => {
+        return request(app)
+            .get("/api/articles?topic=cooking")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                
+                articles.forEach((article) => {
+                    expect(article).toMatchObject({
+                        article_id: expect.any(Number),
+                        title: expect.any(String),
+                        topic: 'cooking',
+                        author: expect.any(String),
+                        body: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        comment_count: expect.any(Number),
+                    });
+                });
+            });
+    });
 });
 
 
