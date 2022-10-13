@@ -154,11 +154,12 @@ const fetchComments = (article_id) => {
 
 
 const putComment = (article_id, newComment) => {
+    
     if (article_id === undefined) {
         return Promise.reject({ status: 400, msg: `The ':article_id' is undefined in POST request to /api/articles/:article_id/comments` });
     }
     if (isNaN(article_id)) {
-        return Promise.reject({ status: 400, msg: `The ':article_id' should be a number in request POST /api/articles/:article_id/comments` });
+        return Promise.reject({ status: 400, msg: `The ':article_id' should be a number POST in request to /api/articles/:article_id/comments` });
     }
     
     const { username, body } = newComment;
@@ -184,10 +185,17 @@ const putComment = (article_id, newComment) => {
 
 
 const removeComment = (comment_id) => {
+    if (comment_id === undefined) {
+        return Promise.reject({ status: 400, msg: `The ':comment_id' is undefined in DELETE request to /api/comments/:comment_id` });
+    }
+    if (isNaN(comment_id)) {
+        return Promise.reject({ status: 400, msg: `The ':comment_id' should be a number in DELETE request /api/comments/:comment_id` });
+    }
     return db.query(`SELECT *               
                      FROM comments
                      WHERE comment_id = $1;`, [comment_id]).then(
-        ({ rows: comments }) => {
+                         ({ rows: comments }) => {
+                             
             if (comments.length < 1) {
                 return Promise.reject({ status: 400, msg: `There is no comment with 'comment_id' of ${comment_id} in POST /api/comments/:comment_id` });
             }

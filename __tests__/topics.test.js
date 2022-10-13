@@ -617,7 +617,7 @@ describe('POST /api/articles/:article_id/comments', () => {
             .expect(400)
             .then(({ body }) => {
                 const { msg } = body;
-                expect(msg).toBe(`The ':article_id' should be a number in request POST /api/articles/:article_id/comments`);
+                expect(msg).toBe(`The ':article_id' should be a number POST in request to /api/articles/:article_id/comments`);
             });
     });
 
@@ -631,15 +631,21 @@ describe('DELETE /api/comments/:comment_id', () => {
         return request(app).delete('/api/comments/1').expect(204);
     });
 
-    const comment_id = 19;
+    const comment_id = 999;
 
-    xtest('delete non existing comment :comment_id of 19 , returns 400 code unsuccessful ', () => {
-        return request(app).delete('/api/comments/19').expect(400).then(({ body }) => {
+    test(`delete non existing comment :comment_id of ${comment_id} , returns 400 code unsuccessful `, () => {
+        return request(app).delete(`/api/comments/${comment_id}`).expect(400).then(({ body }) => {
                 const { msg } = body;
-                expect(msg).toBe(`There is no comment with 'comment_id' of ${comment_id} in POST /api/comments/:comment_id`);
+                expect(msg).toBe(`There is no comment with 'comment_id' of 999 in POST /api/comments/:comment_id`);
             });
     });
 
+    test('delete non existing comment :comment_id of dog , returns 400 code unsuccessful ', () => {
+        return request(app).delete('/api/comments/dog').expect(400).then(({ body }) => {
+                const { msg } = body;
+                expect(msg).toBe(`The ':comment_id' should be a number in DELETE request /api/comments/:comment_id`);
+            });
+    });
     
 });
 
