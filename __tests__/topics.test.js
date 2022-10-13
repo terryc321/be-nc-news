@@ -589,4 +589,17 @@ describe('POST /api/articles/:article_id/comments', () => {
 
     
 });
-    
+
+
+describe.only('DELETE /api/comments/:comment_id', () => {
+
+    test('delete comment :comment_id 1 , returns 204 code successful', () => {
+        return request(app).delete('/api/comments/1').expect(204);
+    });
+
+    test('delete non existing comment :comment_id of 19 , returns 404 code unsuccessful ', () => {
+        return request(app).delete('/api/comments/19').expect(404);
+    });
+
+});
+
