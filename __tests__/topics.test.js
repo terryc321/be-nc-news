@@ -631,9 +631,15 @@ describe('DELETE /api/comments/:comment_id', () => {
         return request(app).delete('/api/comments/1').expect(204);
     });
 
-    test('delete non existing comment :comment_id of 19 , returns 404 code unsuccessful ', () => {
-        return request(app).delete('/api/comments/19').expect(404);
+    const comment_id = 19;
+
+    xtest('delete non existing comment :comment_id of 19 , returns 400 code unsuccessful ', () => {
+        return request(app).delete('/api/comments/19').expect(400).then(({ body }) => {
+                const { msg } = body;
+                expect(msg).toBe(`There is no comment with 'comment_id' of ${comment_id} in POST /api/comments/:comment_id`);
+            });
     });
 
+    
 });
 
