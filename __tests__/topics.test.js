@@ -712,3 +712,114 @@ describe("User api testing", () => {
 
 
 
+// in order to see if patch is working , need to be able to get comment first
+describe('Ticket # 18-A GET /api/comments/:comment_id', () => {
+
+    test("GET comment with comment_id of 1 /api/comments/1 expect 200", () => {
+        return request(app).get("/api/comments/2").expect(200);
+    });
+
+    for (let comment_id = 2 ; comment_id < 13 ; comment_id ++ ) {
+        test(`GET the response and status of /api/comments/${comment_id}`, () => {
+        return request(app)
+            .get(`/api/comments/${comment_id}`)
+            .expect(200)
+            .then(({ body }) => {
+                const { comment } = body;
+
+                    expect(comment).toMatchObject({
+                        comment_id: comment_id,
+                        votes: expect.any(Number),
+                        created_at: expect.any(String),
+                        author: expect.any(String),
+                        body: expect.any(String)
+                });
+            });
+    });
+    }
+
+    test("get comment using invalid comment_id - should be a number", () => {
+        return request(app)
+            .get("/api/comments/dog")
+            .expect(400)
+            .then(({ body }) => {
+                const { msg } = body;
+                expect(msg).toBe(`'comment_id' in /api/comments/:comment_id is expected to be a number`);
+            });
+    });  
+
+    test("get comment using comment_id not in database", () => {
+        const comment_id = 999;
+        return request(app)
+            .get(`/api/comments/${comment_id}`)
+            .expect(400)
+            .then(({ body }) => {
+                const { msg } = body;
+                expect(msg).toBe(`Comment not found for comment_id given`);
+            });
+    });  
+    
+});
+
+
+
+// patch 
+xdescribe('Ticket # 18 PATCH /api/comments/:comment_id', () => {
+    
+    test('status:201, responds with the updated comment', () => {
+        const commentUpdate = {
+            inc_votes: 100
+        };
+        let original_votes;
+        
+        return request(app)
+            .patch('/api/comments/1')
+            .send(commentUpdate)
+            .expect(201)
+            .then(({ body }) => {
+                const { comment } = body;
+                
+                const incremented_votes = original_votes + commentUpdate.inc_votes;
+                expect(comment.comment_id).toBe(1);
+                expect(comment.votes).toBe(incremented_votes);
+                
+            });
+    });
+
+    test('status:400, bad request on invalid comment_id', () => {
+        const commentUpdate = {
+            inc_votes: 100
+        };
+        return request(app)
+            .patch('/api/comments/dog')
+            .send(commentUpdate)
+            .expect(400);
+    });
+
+    test('status:400, bad comment update object inc_votes not a number', () => {
+        const commentUpdate = {
+            inc_votes: "dog"
+        };
+        return request(app)
+            .patch('/api/comments/1')
+            .send(commentUpdate)
+            .expect(400);
+    });
+
+    test('status:400, bad comment update object inc_votes mis-spelled', () => {
+        const commentUpdate = {
+            inc_voters: 250
+        };
+        return request(app)
+            .patch('/api/comments/1')
+            .send(commentUpdate)
+            .expect(400)
+            .then(({ body }) => {
+                const { msg } = body;
+                expect(msg).toBe("patch request requires 'inc_votes' json to be defined");
+            });;
+    });
+    
+});
+
+

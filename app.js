@@ -9,25 +9,31 @@ const { getArticles,
         postComment,
         deleteComment,
         getApi,
-        
       } = require("./controllers/articlesController");
 
 const { getUsers ,
         getUser} = require("./controllers/usersController");
 
+const { patchComment ,
+      getComment } = require("./controllers/commentsController");
+
 const app = express();
 app.use(express.json());
 
+app.get("/api", getApi);
 app.get("/api/topics", getTopics);
-app.get("/api/articles/:article_id", getArticle);
-app.get("/api/users", getUsers);
-app.patch("/api/articles/:article_id" , patchArticle);
 app.get("/api/articles", getArticles);
+app.get("/api/articles/:article_id", getArticle);
+app.patch("/api/articles/:article_id" , patchArticle);
+app.get("/api/users", getUsers);
+app.get("/api/users/:username", getUser);
 app.get("/api/articles/:article_id/comments", getComments);
 app.post("/api/articles/:article_id/comments", postComment);
+
+app.get("/api/comments/:comment_id", getComment);
 app.delete("/api/comments/:comment_id", deleteComment);
-app.get("/api", getApi);
-app.get("/api/users/:username", getUser);
+app.patch("/api/comments/:comment_id",patchComment);
+
 
 
 
