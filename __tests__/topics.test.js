@@ -335,7 +335,8 @@ describe("Comments testing /api/articles/:article_id/comments ", () => {
 
     // #8 approved + merged
     // #9 which was branched from #8 ? or #main ? dont know forgget
-    
+
+    // cooking is missing 
     // now should have /api/articles?topic=cooking test
 
     // no cooking test
