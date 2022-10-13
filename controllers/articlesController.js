@@ -3,7 +3,8 @@ const { fetchArticles ,
         adjustArticle ,
         fetchComments ,
         putComment ,
-        removeComment
+        removeComment,
+        fetchApi        
       } = require("../models/articlesModel");
 
 const getArticle = (req, res, next) => {
@@ -52,6 +53,11 @@ const deleteComment = (req, res, next) => {
     ).catch(err => next(err));
 };
 
+const getApi = (req, res, next) => {
+    fetchApi().then(
+        msg =>  res.status(200).send({msg})
+    ).catch(err => next(err));
+};
 
 module.exports = {
     getArticles ,
@@ -59,5 +65,6 @@ module.exports = {
     patchArticle,
     getComments ,
     postComment ,
-    deleteComment
+    deleteComment,
+    getApi
 };

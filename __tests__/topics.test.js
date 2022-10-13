@@ -620,8 +620,6 @@ describe('POST /api/articles/:article_id/comments', () => {
                 expect(msg).toBe(`The ':article_id' should be a number POST in request to /api/articles/:article_id/comments`);
             });
     });
-
-    
 });
 
 
@@ -647,5 +645,32 @@ describe('DELETE /api/comments/:comment_id', () => {
             });
     });
     
+});
+
+
+describe("GET /api", () => {
+  test("returns 200 success", () => {
+    return request(app).get("/api").expect(200);
+  });
+
+  test("returns list of endpoints and description ", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+          .then(({ body }) => {
+              
+        const { msg } = body;
+
+        const apis = msg.api;
+
+        apis.forEach((api) => {
+          expect(api).toMatchObject({
+            http: expect.any(String),
+            description: expect.any(String),
+            endpoint: expect.any(String),
+          });
+        });
+      });
+  });
 });
 

@@ -8,6 +8,7 @@ const { getArticles,
         getComments,
         postComment,
         deleteComment,
+        getApi
       } = require("./controllers/articlesController");
 
 const { getUsers } = require("./controllers/usersController");
@@ -23,6 +24,7 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id/comments", getComments);
 app.post("/api/articles/:article_id/comments", postComment);
 app.delete("/api/comments/:comment_id", deleteComment);
+app.get("/api", getApi);
 
 
 
