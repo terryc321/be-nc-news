@@ -50,7 +50,7 @@ const adjustArticle = (article_id, inc_votes) => {
 const fetchArticles = (topic = "") => {
 
     // sanitize topic data
-    var safer_topic = topic.replace(/[^a-z0-9]/gi, '');
+    const safer_topic = topic.replace(/[^a-z0-9]/gi, '');
 
     return db.query(`SELECT articles.article_id  ,
        articles.author ,
