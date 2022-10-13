@@ -305,7 +305,150 @@ describe("Articles api testing /api/articles ", () => {
                 });
             });
     });
-});
+
+
+    const topic_choices = ['','mitch','cats'];
+    
+    const sort_by_choices = ['author','title','article_id','topic',
+                             'created_at','votes','comment_count'];
+
+    const order_choices = ['asc','desc'];
+    topic_choices.forEach((topic)=>{
+    order_choices.forEach((order) => {
+    sort_by_choices.forEach((sort_by) => {
+        
+        test(`sort articles by ${sort_by}`, () => {
+            // console.log(`"checking sort_by = ${sort_by} : order = ${order}`)            
+            return request(app)
+                .get(`/api/articles?topic=${topic}&sort_by=${sort_by}&order=${order}`) 
+                .expect(200)
+                .then(({ body }) => {
+                    const { articles } = body;
+                    
+                    if (order === 'asc'){
+                        expect(articles).toBeSortedBy( `${sort_by}`);
+                    }
+                    else {
+                        expect(articles).toBeSortedBy( `${sort_by}`, { descending: true });
+                    }
+                    
+                    articles.forEach((article) => {
+                        expect(article).toMatchObject({
+                            article_id: expect.any(Number),
+                            title: expect.any(String),
+                            topic: expect.any(String),
+                            author: expect.any(String),
+                            body: expect.any(String),
+                            created_at: expect.any(String),
+                            votes: expect.any(Number),
+                            comment_count: expect.any(Number),
+                        });
+                    });
+                });
+        }); //-- test
+
+        test(`sort articles by ${sort_by}`, () => {
+            sort_by = 'created_at'; // default
+            
+            // console.log(`"checking sort_by = ${sort_by} : order = ${order}`)            
+            return request(app)
+                .get(`/api/articles?order=${order}`) 
+                .expect(200)
+                .then(({ body }) => {
+                    const { articles } = body;
+                    
+                    if (order === 'asc'){
+                        expect(articles).toBeSortedBy( 'created_at');
+                    }
+                    else {
+                        expect(articles).toBeSortedBy( 'created_at', { descending: true });
+                    }
+                    
+                    articles.forEach((article) => {
+                        expect(article).toMatchObject({
+                            article_id: expect.any(Number),
+                            title: expect.any(String),
+                            topic: expect.any(String),
+                            author: expect.any(String),
+                            body: expect.any(String),
+                            created_at: expect.any(String),
+                            votes: expect.any(Number),
+                            comment_count: expect.any(Number),
+                        });
+                    });
+                });
+                }); //-- test
+
+        
+        
+        test(`sort articles by ${sort_by}`, () => {
+            order = 'desc'; // default
+            
+            // console.log(`"checking sort_by = ${sort_by} : order = ${order}`)            
+            return request(app)
+                .get(`/api/articles?sort_by=${sort_by}`) 
+                .expect(200)
+                .then(({ body }) => {
+                    const { articles } = body;
+                    
+                    if (order === 'asc'){
+                        expect(articles).toBeSortedBy( `${sort_by}`);
+                    }
+                    else {
+                        expect(articles).toBeSortedBy( `${sort_by}`, { descending: true });
+                    }
+                    
+                    articles.forEach((article) => {
+                        expect(article).toMatchObject({
+                            article_id: expect.any(Number),
+                            title: expect.any(String),
+                            topic: expect.any(String),
+                            author: expect.any(String),
+                            body: expect.any(String),
+                            created_at: expect.any(String),
+                            votes: expect.any(Number),
+                            comment_count: expect.any(Number),
+                        });
+                    });
+                });
+                }); //-- test
+
+        test(`sort articles by ${sort_by}`, () => {
+            // console.log(`"checking sort_by = ${sort_by} : order = ${order}`)            
+            return request(app)
+                .get(`/api/articles?sort_by=${sort_by}&order=${order}`) 
+                .expect(200)
+                .then(({ body }) => {
+                    const { articles } = body;
+                    
+                    if (order === 'asc'){
+                        expect(articles).toBeSortedBy( `${sort_by}`);
+                    }
+                    else {
+                        expect(articles).toBeSortedBy( `${sort_by}`, { descending: true });
+                    }
+                    
+                    articles.forEach((article) => {
+                        expect(article).toMatchObject({
+                            article_id: expect.any(Number),
+                            title: expect.any(String),
+                            topic: expect.any(String),
+                            author: expect.any(String),
+                            body: expect.any(String),
+                            created_at: expect.any(String),
+                            votes: expect.any(Number),
+                            comment_count: expect.any(Number),
+                        });
+                    });
+                });
+        }); //-- test
+        
+    });
+    });
+    });
+    
+}); // describe end
+
 
 
 

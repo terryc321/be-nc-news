@@ -1,5 +1,13 @@
 const db = require("../db/connection");
 
+
+
+const sql_sanitize = (str = "") => {
+    return str.replace(/[^a-z0-9 _-]/gi, '');
+}
+
+
+
 const fetchArticle = (article_id) => {
   return db
     .query(`SELECT articles.article_id  ,
@@ -47,12 +55,24 @@ const adjustArticle = (article_id, inc_votes) => {
     });
 };
 
-const fetchArticles = (topic = "") => {
 
-    // sanitize topic data
-    const safer_topic = topic.replace(/[^a-z0-9]/gi, '');
+ ///  /api/articles
+const fetchArticles = (topic_In = "" , sort_In = "created_at" , order_In = "desc") => {
 
-    return db.query(`SELECT articles.article_id  ,
+    // console.log("sort_In = " , sort_In);
+    // console.log("order_In = " , order_In);
+    
+    const topic = sql_sanitize(topic_In);
+    const sort_by  = sql_sanitize(sort_In).toLowerCase();
+    const order = sql_sanitize(order_In).toLowerCase();
+
+    // console.log("<<< we reached line 66 articlesModel.js ");
+    // console.log("order = " , order);
+    
+    
+    if (sort_by === "" || order === ""){
+        
+        return db.query(`SELECT articles.article_id  ,
        articles.author ,
        articles.title ,
        articles.topic ,
@@ -62,13 +82,76 @@ const fetchArticles = (topic = "") => {
        CAST(COUNT(comments.article_id) AS INT) AS comment_count 
        FROM comments RIGHT JOIN articles
        ON comments.article_id = articles.article_id
-       WHERE articles.topic LIKE \'%${safer_topic}%\'
+       WHERE articles.topic LIKE \'%${topic}%\'
        GROUP BY articles.article_id
-       ORDER BY articles.created_at DESC;`).then(({ rows: articles }) => {
+       ORDER BY created_at DESC`).then(({ rows: articles }) => {
+            return articles;
+        }).catch((err) => {
+            return Promise.reject(err);
+        });
+    }
+
+    // console.log("<<< we reached line 90 articlesModel.js ");
+    
+    // const sort_by_choices = ['author','title','article_id','topic',
+    //                          'created_at','votes','comment_count'];
+    // if (!sort_by_choices.includes(sort_by)){
+    //     return Promise.reject({ status: 400, msg: `sort_by query parameter should be one of ${sort_by_choices} in GET request to /api/articles` });        
+    // }
+
+    // const order_choices = ['asc','desc'];
+    // if (!order_choices.includes(order)){
+    //     return Promise.reject({ status: 400, msg: `order query parameter should be one of ${sort_by_choices} asc to mean ascending / desc to mean descending in GET request to /api/articles` });        
+    // }
+    
+    const query = `SELECT articles.article_id  ,
+       articles.author ,
+       articles.title ,
+       articles.topic ,
+       articles.created_at ,
+       articles.votes ,
+       articles.body , 
+       CAST(COUNT(comments.article_id) AS INT) AS comment_count 
+       FROM comments RIGHT JOIN articles
+       ON comments.article_id = articles.article_id
+       WHERE articles.topic LIKE \'%${topic}%\'
+       GROUP BY articles.article_id
+       ORDER BY ${sort_by} ${order}  ; `;
+
+    //`ORDER BY %${sort_by}% ${order};`
+
+    // console.log("sort_by = " , sort_by);
+
+    // if (sort_by === 'author'){
+    //     console.log(`the query for authors : ${query}`);
+    // }
+
+    // console.log("<<< we reached line 123 articlesModel.js ");
+    
+    return db.query(query).then(({ rows: articles }) => {
         return articles;
        }).catch((err) => {
+           console.log("err = " , err.toString());
             return Promise.reject(err);
        });
+
+     // return db.query(`SELECT articles.article_id  ,
+     //   articles.author ,
+     //   articles.title ,
+     //   articles.topic ,
+     //   articles.created_at ,
+     //   articles.votes ,
+     //   articles.body , 
+     //   CAST(COUNT(comments.article_id) AS INT) AS comment_count 
+     //   FROM comments RIGHT JOIN articles
+     //   ON comments.article_id = articles.article_id
+     //   WHERE articles.topic LIKE \'%${topic}%\'
+     //   GROUP BY articles.article_id
+     //   ORDER BY \'%${sort_by}%\' \'${order}\';`).then(({ rows: articles }) => {
+     //    return articles;
+     //   }).catch((err) => {
+     //        return Promise.reject(err);
+     //   });
 };
 
 
@@ -101,13 +184,9 @@ const fetchComments = (article_id) => {
                                  return Promise.reject(err);
                              });
                              
+                         }).catch((err) => {
+                                 return Promise.reject(err);
                          });
-}
-
-
-
-const sql_sanitize = (str = "") => {
-    return str.replace(/[^a-z0-9 _-]/gi, '');
 }
 
 

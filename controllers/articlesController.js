@@ -23,8 +23,12 @@ const patchArticle = (req, res, next) => {
 
 
 const getArticles = (req, res, next) => {
-    const { topic } = req.query;   
-    fetchArticles(topic).then((articles) => res.status(200).send({ articles }))
+    const { topic , sort_by , order } = req.query;
+    // console.log(`getArticles topic = ${topic}`);
+    // console.log(`getArticles sort_by = ${sort_by}`);
+    // console.log(`getArticles order = ${order}`);
+    
+    fetchArticles(topic, sort_by , order).then((articles) => res.status(200).send({ articles }))
         .catch((err) => next(err));
 };
 
