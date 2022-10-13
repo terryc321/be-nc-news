@@ -47,34 +47,11 @@ const adjustArticle = (article_id, inc_votes) => {
     });
 };
 
-                   // default 
 const fetchArticles = (topic = "") => {
 
-    // endpoint is ["/api/articles"]
-    // endpoint is ["/api/articles?topic=asdfko34km4o34r"]
-    
-    // no article_id given 
-    
-    // if mis-spell topic same as topic="" the query parameter mis-spelled ignored
-    
-    // sql injection - strip any characters not alphabetic or numbers
+    // sanitize topic data
     var safer_topic = topic.replace(/[^a-z0-9]/gi, '');
 
-    // problems with using LIKE '%$1%' was not working
-    // so make it easier just use
-    // string literal  `....${}...`
-
-    // no pr requests today
-    // next pr request will be thursday 9 am
-
-    // 8 -
-    //     9- done
-    //         10 - done  no testing ...
-    //              onto 11
-    // 
-
-    //  `....'
-    
     return db.query(`SELECT articles.article_id  ,
        articles.author ,
        articles.title ,
