@@ -91,13 +91,29 @@ const fetchComments = (article_id) => {
 };
 
 
+// regex ^ means anything not mentioned will be stripped from string
+const sql_treat = (str = "") => {
+    return str.replace(/[^a-z0-9 _-]/gi, '');
+}
+
+
 const putComment = (article_id, newComment) => {
     const { username, body } = newComment;
-    return db
-        .query(
-            "INSERT INTO comments ( author , body , article_id) VALUES ($1, $2, $3) RETURNING *;",
-            [username, body, article_id]
-        ).then(({ rows }) => {
+
+    const safer_username = sql_treat(username);
+    const safer_body = sql_treat(body);
+    const safer_article_id = sql_treat(article_id);
+
+    const sql_query = `INSERT INTO comments
+                                   ( author , body , article_id)
+                       VALUES (\'${safer_username}\',
+                               \'${safer_body}\',
+                                ${safer_article_id})
+                       RETURNING *;`;
+
+    console.log(`sql_query = [${sql_query}]`);
+    
+    return db.query(sql_query).then(({ rows }) => {
             console.log("rows = ", rows);
             return rows[0];
         }).catch((err) => {

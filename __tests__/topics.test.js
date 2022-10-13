@@ -393,7 +393,7 @@ change branch
 
 
 */
-xdescribe('POST /api/articles/:article_id/comments', () => {
+describe('POST /api/articles/:article_id/comments', () => {
     test('status:201, responds with new comment added to database', () => {
 
         // so test was passing even though external testing through
@@ -427,6 +427,8 @@ xdescribe('POST /api/articles/:article_id/comments', () => {
                 });
                 expect(comment.author).toBe('butter_bridge');
                 expect(comment.body).toBe(`using ${msg} as encryption`);
+
+                
             }).then(() => {
 
                 return request(app)
