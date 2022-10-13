@@ -674,3 +674,41 @@ describe("GET /api", () => {
   });
 });
 
+
+
+describe("User api testing", () => {
+  test("GET single user /api/users/:username", () => {
+    return request(app).get("/api/users/butter_bridge").expect(200);
+  });
+
+  const users = ["butter_bridge", "icellusedkars", "rogersop", "lurker"];
+  users.forEach(function (user) {
+    test(`GET the response and status of /api/users/${user}`, () => {
+      return request(app)
+        .get(`/api/users/${user}`)
+        .expect(200)
+        .then(({ body }) => {
+          const { user } = body;
+
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+    });
+  });
+
+  test("GET non existent user /api/users/jackson", () => {
+    return request(app)
+      .get("/api/users/jackson")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe(`username not found in database`);
+      });
+  });
+});
+
+
+

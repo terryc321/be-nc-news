@@ -8,10 +8,12 @@ const { getArticles,
         getComments,
         postComment,
         deleteComment,
-        getApi
+        getApi,
+        
       } = require("./controllers/articlesController");
 
-const { getUsers } = require("./controllers/usersController");
+const { getUsers ,
+        getUser} = require("./controllers/usersController");
 
 const app = express();
 app.use(express.json());
@@ -25,6 +27,8 @@ app.get("/api/articles/:article_id/comments", getComments);
 app.post("/api/articles/:article_id/comments", postComment);
 app.delete("/api/comments/:comment_id", deleteComment);
 app.get("/api", getApi);
+app.get("/api/users/:username", getUser);
+
 
 
 
