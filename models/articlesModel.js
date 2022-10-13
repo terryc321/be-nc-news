@@ -82,24 +82,28 @@ const fetchComments = (article_id) => {
 
     return db.query(`SELECT *               
                      FROM articles
-                     WHERE article_id = $1;`, [article_id]).then(({ rows: articles }) => {
-                         if (articles.length < 1) {
-                             return Promise.reject({ status: 400, msg: `There is no article with 'article_id' of ${article_id} in /api/articles/:article_id/comments` });
-                         }
-                     }).then(() => {
-        return db.query(`SELECT comment_id ,
+                     WHERE article_id = $1;`, [article_id]).then(
+                         ({ rows: articles }) => {
+                             if (articles.length < 1) {
+                                 return Promise.reject({ status: 400, msg: `There is no article with 'article_id' of ${article_id} in /api/articles/:article_id/comments` });
+                             }
+                         }).then(() => {
+                             return db.query(`SELECT comment_id ,
                             votes ,
                             created_at ,
                             author ,
                             body                             
                      FROM comments
                      WHERE article_id = $1
-                     ORDER BY created_at DESC;`,[article_id]).then(({ rows: comments }) => {
-             return comments;
-       }).catch((err) => {
-            return Promise.reject(err);
-       });
-};
+                     ORDER BY created_at DESC;`, [article_id]).then(({ rows: comments }) => {
+                                 return comments;
+                             }).catch((err) => {
+                                 return Promise.reject(err);
+                             });
+                             
+                         });
+}
+
 
 
 const sql_sanitize = (str = "") => {
