@@ -250,8 +250,6 @@ describe("Articles api testing /api/articles ", () => {
             .then(({ body }) => {
                 const { articles } = body;
 
-                console.log("articles = " , articles);
-                
                 expect(articles).toBeSortedBy('created_at', { descending: true });
 
                 articles.forEach((article) => {
@@ -333,41 +331,24 @@ describe("Comments testing /api/articles/:article_id/comments ", () => {
             });
     });
 
-    // #8 approved + merged
-    // #9 which was branched from #8 ? or #main ? dont know forgget
-
-    // cooking is missing 
-    // now should have /api/articles?topic=cooking test
-
-    // no cooking test
-
-    // branch #9
-  
-    
-
-    xtest("get comments using invalid article_id - should be a number", () => {
+    test("get comments using invalid article_id - should be a number", () => {
         return request(app)
             .get("/api/articles/dog/comments")
             .expect(400)
             .then(({ body }) => {
                 const { msg } = body;
-                //expect(msg.startsWith('error: invalid input syntax for type integer')).toBe(true);
-                cl
-
-                // at # 9
-                // want to commit # 8
-                // cant because 9 fails tests
-                // 
+                expect(msg).toBe("'article_id' in /api/articles/:article_id/comments is expected to be a number");
             });
     });  
 
-    xtest("get comments using article_id not in database", () => {
+    test("get comments using article_id not in database", () => {
+        const article_id = 15;
         return request(app)
-            .get("/api/articles/15/comments")
+            .get(`/api/articles/${article_id}/comments`)
             .expect(400)
             .then(({ body }) => {
                 const { msg } = body;
-                expect(msg.startsWith('error: invalid input syntax for type integer')).toBe(true);
+                expect(msg).toBe(`There is no article with 'article_id' of ${article_id} in /api/articles/:article_id/comments`);
             });
     });  
     
