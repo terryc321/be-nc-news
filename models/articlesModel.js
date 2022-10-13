@@ -47,8 +47,11 @@ const adjustArticle = (article_id, inc_votes) => {
     });
 };
 
+const fetchArticles = (topic = "") => {
 
-const fetchArticles = () => {
+    // sanitize topic data
+    const safer_topic = topic.replace(/[^a-z0-9]/gi, '');
+
     return db.query(`SELECT articles.article_id  ,
        articles.author ,
        articles.title ,
@@ -59,6 +62,7 @@ const fetchArticles = () => {
        CAST(COUNT(comments.article_id) AS INT) AS comment_count 
        FROM comments RIGHT JOIN articles
        ON comments.article_id = articles.article_id
+       WHERE articles.topic LIKE \'%${safer_topic}%\'
        GROUP BY articles.article_id
        ORDER BY articles.created_at DESC;`).then(({ rows: articles }) => {
         return articles;
