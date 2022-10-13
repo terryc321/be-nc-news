@@ -1,3 +1,4 @@
+
 const request = require("supertest");
 const app = require("../app");
 const pool = require("../db/connection");
@@ -376,3 +377,62 @@ describe("Comments testing /api/articles/:article_id/comments ", () => {
     
 
 });
+
+describe('POST /api/articles/:article_id/comments', () => {
+    test('status:201, responds with new comment added to database', () => {
+
+        const msg = `we are ${Date.now()} seconds since dawn of time`;
+        const username = 'butter_bridge';
+
+        const newComment = {
+            username: username,
+            body: msg,
+        };
+        const article_id = 2;
+
+        return request(app)
+            .post(`/api/articles/${article_id}/comments`)
+            .send(newComment)
+            .expect(201)
+            .then(({ body }) => {
+                const { comment } = body;
+                expect(comment).toMatchObject({
+                    body: msg,
+                    author: username,
+                    comment_id: expect.any(Number),
+                    votes: expect.any(Number),
+                    created_at: expect.any(String),
+                });
+            });
+    });
+
+    xtest('POST article_id does not exist', () => {
+
+        const newComment = {
+            username: "butter_bridge",
+            body: "a comment long long ago",
+        };
+        const article_id = 15;
+
+        return request(app)
+            .post(`/api/articles/${article_id}/comments`)
+            .send(newComment)
+            .expect(400)
+            .then(({ msg }) => {
+                console.log("msg = " , msg);
+                
+                // const { comment } = body;
+                // expect(comment).toMatchObject({
+                //     body: msg,
+                //     author: username,
+                //     comment_id: expect.any(Number),
+                //     votes: expect.any(Number),
+                //     created_at: expect.any(String),
+                // });
+            });
+    });
+    
+
+    
+});
+

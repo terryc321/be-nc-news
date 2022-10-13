@@ -67,8 +67,8 @@ const fetchArticles = (topic = "") => {
        ORDER BY articles.created_at DESC;`).then(({ rows: articles }) => {
         return articles;
        }).catch((err) => {
-        return Promise.reject(err);
-    });
+            return Promise.reject(err);
+       });
 };
 
 
@@ -94,9 +94,26 @@ const fetchComments = (article_id) => {
                             body                             
                      FROM comments
                      WHERE article_id = $1
-                     ORDER BY created_at DESC;`, [article_id]).then(({ rows: comments }) => {
-            return comments;
-        });
+                     ORDER BY created_at DESC;`,[article_id]).then(({ rows: comments }) => {
+             return comments;
+       }).catch((err) => {
+            return Promise.reject(err);
+       });
+};
+
+
+const sql_sanitize = (str = "") => {
+    return str.replace(/[^a-z0-9 _-]/gi, '');
+}
+
+
+const putComment = (article_id, newComment) => {
+    const { username, body } = newComment;
+    return db.query(`INSERT INTO comments
+                                   ( author , body , article_id)
+                       VALUES ($1 , $2 , $3)
+                       RETURNING *;`, [username, body, article_id]).then(({ rows }) => {
+        return rows[0];
     }).catch((err) => {
         return Promise.reject(err);
     });
@@ -105,5 +122,9 @@ const fetchComments = (article_id) => {
 
 
 module.exports = {
-    fetchArticles , fetchArticle, adjustArticle , fetchComments
+    fetchArticles ,
+    fetchArticle,
+    adjustArticle ,
+    fetchComments ,
+    putComment
 };
