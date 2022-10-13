@@ -21,8 +21,6 @@ const adjustComment = (comment_id, inc_votes) => {
     .then(({ rows }) => {
       return rows[0];
     }).catch((err) => {
-        console.log("err = ",err);
-        
         return Promise.reject(err);
     });
 };
