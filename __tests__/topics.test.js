@@ -284,15 +284,68 @@ describe("Articles api testing /api/articles ", () => {
             });
     });
 
-    const topic_choices = ['','mitch','cats'];
+    test("topic of cooking - articles should only involve cooking", () => {
+
+        return request(app)
+            .get("/api/articles?topic=cooking")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                
+                articles.forEach((article) => {
+                    expect(article).toMatchObject({
+                        article_id: expect.any(Number),
+                        title: expect.any(String),
+                        topic: 'cooking',
+                        author: expect.any(String),
+                        body: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        comment_count: expect.any(Number),
+                    });
+                });
+            });
+    });
+    
+
     
     const sort_by_choices = ['author','title','article_id','topic',
                              'created_at','votes','comment_count'];
 
+    
+    test(`sort_by is not one ${sort_by_choices} `, () => {
+            return request(app)
+                .get(`/api/articles?sort_by=badinput`) 
+                .expect(400)
+                .then(({ body }) => {
+                    const { msg } = body;
+                    
+                    expect(msg).toBe(`sort_by query parameter should be one of ${sort_by_choices} in GET request to /api/articles`)
+                });
+    });
+
     const order_choices = ['asc','desc'];
+    
+    test(`order is not one ${order_choices} `, () => {
+            return request(app)
+                .get(`/api/articles?order=badinput`) 
+                .expect(400)
+                .then(({ body }) => {
+                    const { msg } = body;
+                    
+                    expect(msg).toBe(`order query parameter should be one of ${order_choices} asc to mean ascending / desc to mean descending in GET request to /api/articles`);
+                });
+    });
+    
+
+    const topic_choices = ['','mitch','cats'];
+    
     topic_choices.forEach((topic)=>{
     order_choices.forEach((order) => {
     sort_by_choices.forEach((sort_by) => {
+
+        // --- big loop ---
+        // --- test 1 -- all topic + sort_by + order
         
         test(`sort articles by ${sort_by}`, () => {
             // console.log(`"checking sort_by = ${sort_by} : order = ${order}`)            
@@ -324,6 +377,7 @@ describe("Articles api testing /api/articles ", () => {
                 });
         }); //-- test
 
+        // --- test 2 -- just order        
         test(`sort articles by ${sort_by}`, () => {
             sort_by = 'created_at'; // default
             
@@ -357,6 +411,7 @@ describe("Articles api testing /api/articles ", () => {
                 }); //-- test
 
         
+        // --- test 3 just sort_by
         
         test(`sort articles by ${sort_by}`, () => {
             order = 'desc'; // default
@@ -390,6 +445,9 @@ describe("Articles api testing /api/articles ", () => {
                 });
                 }); //-- test
 
+
+        // test 4 -- sort_by + order
+        
         test(`sort articles by ${sort_by}`, () => {
             // console.log(`"checking sort_by = ${sort_by} : order = ${order}`)            
             return request(app)
@@ -598,10 +656,35 @@ describe('POST /api/articles/:article_id/comments', () => {
             .expect(400)
             .then(({ body }) => {
                 const { msg } = body;
-                expect(msg).toBe(`The ':article_id' should be a number in request POST /api/articles/:article_id/comments`);
+                expect(msg).toBe(`The ':article_id' should be a number POST in request to /api/articles/:article_id/comments`);
             });
     });
 
     
 });
+
+
+describe('DELETE /api/comments/:comment_id', () => {
+
+    test('delete comment :comment_id 1 , returns 204 code successful', () => {
+        return request(app).delete('/api/comments/1').expect(204);
+    });
+
+    const comment_id = 999;
+
+    test(`delete non existing comment :comment_id of ${comment_id} , returns 400 code unsuccessful `, () => {
+        return request(app).delete(`/api/comments/${comment_id}`).expect(400).then(({ body }) => {
+                const { msg } = body;
+                expect(msg).toBe(`There is no comment with 'comment_id' of 999 in POST /api/comments/:comment_id`);
+            });
+    });
+
+    test('delete non existing comment :comment_id of dog , returns 400 code unsuccessful ', () => {
+        return request(app).delete('/api/comments/dog').expect(400).then(({ body }) => {
+                const { msg } = body;
+                expect(msg).toBe(`The ':comment_id' should be a number in DELETE request /api/comments/:comment_id`);
+            });
+    });
     
+});
+
