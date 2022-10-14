@@ -1,11 +1,8 @@
 const db = require("../db/connection");
 
-
-
 const sql_sanitize = (str = "") => {
     return str.replace(/[^a-z0-9 _-]/gi, '');
 }
-
 
 
 const fetchArticle = (article_id) => {
@@ -56,15 +53,52 @@ const adjustArticle = (article_id, inc_votes) => {
 };
 
 
+
 const fetchArticles = (topic_In = "" , sort_In = "created_at" , order_In = "desc") => {
-    
-    const topic = sql_sanitize(topic_In);
-    const sort_by  = sql_sanitize(sort_In).toLowerCase();
-    const order = sql_sanitize(order_In).toLowerCase();
-    
-    if (sort_by === "" || order === ""){
-        
-        return db.query(`SELECT articles.article_id  ,
+
+  const topic = sql_sanitize(topic_In);
+  const sort_by = sql_sanitize(sort_In).toLowerCase();
+  const order = sql_sanitize(order_In).toLowerCase();
+
+  return db
+    .query(`SELECT * FROM topics WHERE slug = $1 ;`, [topic])
+    .then(({ rows }) => {
+      if (!(rows.length > 0 || topic === "")) {
+        return Promise.reject({
+          status: 404,
+          msg: "invalid 'topic' query parameter in /api/articles",
+        });
+      }
+
+      const sortbyChoices = [
+        "author",
+        "title",
+        "article_id",
+        "topic",
+        "created_at",
+        "votes",
+        "comment_count",
+      ];
+      if (!sortbyChoices.includes(sort_by)) {
+        return Promise.reject({
+          status: 400,
+          msg: "invalid 'order' query parameter in /api/articles",
+        });
+      }
+
+      const orderChoices = ["asc", "desc", ""];
+      if (!orderChoices.includes(order)) {
+        return Promise.reject({
+          status: 400,
+          msg: "invalid 'order' query parameter in /api/articles",
+        });
+      }
+
+      if (sort_by === "") {
+            
+        return db
+          .query(
+            `SELECT articles.article_id  ,
        articles.author ,
        articles.title ,
        articles.topic ,
@@ -76,12 +110,16 @@ const fetchArticles = (topic_In = "" , sort_In = "created_at" , order_In = "desc
        ON comments.article_id = articles.article_id
        WHERE articles.topic LIKE \'%${topic}%\'
        GROUP BY articles.article_id
-       ORDER BY created_at DESC`).then(({ rows: articles }) => {
+       ORDER BY created_at DESC`
+          )
+          .then(({ rows: articles }) => {
             return articles;
-        }).catch((err) => {
+          })
+          .catch((err) => {
             return Promise.reject(err);
-        });
-    }
+          });
+      }
+
 
     const sort_by_choices = ['author','title','article_id','topic',
                              'created_at','votes','comment_count'];
@@ -95,6 +133,7 @@ const fetchArticles = (topic_In = "" , sort_In = "created_at" , order_In = "desc
     }
     
     const query = `SELECT articles.article_id  ,
+
        articles.author ,
        articles.title ,
        articles.topic ,
@@ -107,6 +146,7 @@ const fetchArticles = (topic_In = "" , sort_In = "created_at" , order_In = "desc
        WHERE articles.topic LIKE \'%${topic}%\'
        GROUP BY articles.article_id
        ORDER BY ${sort_by} ${order}  ; `;
+
    
     return db.query(query).then(({ rows: articles }) => {
         return articles;
