@@ -831,3 +831,93 @@ describe("Ticket # 18 PATCH /api/comments/:comment_id", () => {
 });
 
 
+
+
+describe('POST /api/articles', () => {
+    test('status:201, responds with new article added to database', () => {
+
+        const author = 'butter_bridge';
+        const title = `car maintenance for dummies`;
+        const article_body = "spanners are the most under-rated tools";
+        const topic = "mitch";
+        
+        const newArticle = {
+            author: author,
+            title: title,
+            body:  article_body,
+            topic: topic,
+        };
+        
+        return request(app)
+            .post(`/api/articles`)
+            .send(newArticle)
+            .expect(201)
+            .then(({ body }) => {
+                const { article } = body;
+                expect(article).toMatchObject({
+                    author: author,
+                    title: title,
+                    body: article_body,
+                    topic: topic,
+                    article_id: expect.any(Number),
+                    votes: 0,
+                    created_at: expect.any(String),
+                    comment_count: 0,                    
+                });
+            });
+    });
+
+    // author not in users table as 'users.username'
+    test('status:400, author not in users table', () => {
+        
+        const author = 'mystery_man';
+        const title = `car maintenance for dummies`;
+        const article_body = "spanners are the most under-rated tools";
+        const topic = "mitch";
+        
+        const newArticle = {
+            author: author,
+            title: title,
+            body:  article_body,
+            topic: topic,
+        };
+        
+        return request(app)
+            .post(`/api/articles`)
+            .send(newArticle)
+            .expect(400)
+            .then(({ body }) => {
+                const { msg } = body;
+                //console.log("msg = ", msg);                    
+            });
+    });
+
+    // topic not in topics table as 'topics.slug'
+    test('status:400, topic not in topics table', () => {
+        
+        const author = 'butter_bridge'; // butter_bridge in users(username) 
+        const title = `car maintenance for dummies`;
+        const article_body = "spanners are the most under-rated tools";
+        const topic = "flamingo"; // flamingo not in topics(slug)
+        
+        const newArticle = {
+            author: author,
+            title: title,
+            body:  article_body,
+            topic: topic,
+        };
+        
+        return request(app)
+            .post(`/api/articles`)
+            .send(newArticle)
+            .expect(400)
+            .then(({ body }) => {
+                const { msg } = body;
+                //console.log("msg = ", msg);
+            });
+    });
+
+    
+
+});
+

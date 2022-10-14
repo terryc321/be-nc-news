@@ -302,6 +302,56 @@ status 204 and no content` },
 };
 
 
+const putArticle = async (newArticle) => {
+  const { author, title, body, topic } = newArticle;
+
+  // topic foreign key must be in topics table under topics.slug
+  // author foreign key must be in users table under users.username
+
+  let rows = undefined;
+
+  let query1 = await db.query("SELECT * FROM topics WHERE topics.slug = $1", [
+    topic,
+  ]);
+  if (query1.rows.length < 1) {
+    return Promise.reject({
+      status: 400,
+      msg: "Article 'topic' json is a foreign key is not in the topics table 'topics.slug' ",
+    });
+  }
+
+  let query2 = await db.query("SELECT * FROM users WHERE users.username = $1", [
+    author,
+  ]);
+  if (query2.rows.length < 1) {
+    return Promise.reject({
+      status: 400,
+      msg: "Article 'author' json is a foreign key is not in users table 'users.username' ",
+    });
+  }
+
+  let query3 = await db.query(
+    `INSERT INTO articles ( author , title , body , topic)
+       VALUES ($1 , $2 , $3, $4)
+       RETURNING *;`,
+    [author, title, body, topic]);
+
+  if (query3.rows.length < 1) {
+    return Promise.reject({
+      status: 400,
+      msg: "Article failed to be added to database  ",
+    });
+  }
+
+  let result = query3.rows[0];
+  // not sure why want a comment count on newly posted article in database
+  result.comment_count = 0;
+  return result;
+};
+
+
+
+
 module.exports = {
     fetchArticles ,
     fetchArticle,
@@ -309,5 +359,6 @@ module.exports = {
     fetchComments ,
     putComment,
     removeComment,
-    fetchApi
+    fetchApi,
+    putArticle
 };

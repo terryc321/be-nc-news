@@ -4,7 +4,8 @@ const { fetchArticles ,
         fetchComments ,
         putComment ,
         removeComment,
-        fetchApi        
+        fetchApi ,
+        putArticle
       } = require("../models/articlesModel");
 
 const getArticle = (req, res, next) => {
@@ -55,6 +56,12 @@ const getApi = (req, res, next) => {
     ).catch(err => next(err));
 };
 
+const postArticle = (req, res, next) => {
+    putArticle(req.body).then((article) => res.status(201).send({ article }))
+        .catch((err) => next(err));
+};
+
+
 module.exports = {
     getArticles ,
     getArticle,
@@ -62,5 +69,6 @@ module.exports = {
     getComments ,
     postComment ,
     deleteComment,
-    getApi
+    getApi,
+    postArticle,
 };
