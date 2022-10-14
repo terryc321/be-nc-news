@@ -3,7 +3,8 @@ const { fetchArticles ,
         adjustArticle ,
         fetchComments ,
         putComment ,
-        removeComment
+        removeComment,
+        fetchApi        
       } = require("../models/articlesModel");
 
 const getArticle = (req, res, next) => {
@@ -25,10 +26,6 @@ const patchArticle = (req, res, next) => {
 
 const getArticles = (req, res, next) => {
     const { topic , sort_by , order } = req.query;
-    // console.log(`getArticles topic = ${topic}`);
-    // console.log(`getArticles sort_by = ${sort_by}`);
-    // console.log(`getArticles order = ${order}`);
-    
     fetchArticles(topic, sort_by , order).then((articles) => res.status(200).send({ articles }))
         .catch((err) => next(err));
 };
@@ -52,6 +49,11 @@ const deleteComment = (req, res, next) => {
     ).catch(err => next(err));
 };
 
+const getApi = (req, res, next) => {
+    fetchApi().then(
+        msg =>  res.status(200).send({msg})
+    ).catch(err => next(err));
+};
 
 module.exports = {
     getArticles ,
@@ -59,5 +61,6 @@ module.exports = {
     patchArticle,
     getComments ,
     postComment ,
-    deleteComment
+    deleteComment,
+    getApi
 };

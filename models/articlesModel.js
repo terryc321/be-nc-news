@@ -53,7 +53,9 @@ const adjustArticle = (article_id, inc_votes) => {
 };
 
 
-const fetchArticles = (topic_In = "", sort_In = "created_at",order_In = "desc") => {
+
+const fetchArticles = (topic_In = "" , sort_In = "created_at" , order_In = "desc") => {
+
   const topic = sql_sanitize(topic_In);
   const sort_by = sql_sanitize(sort_In).toLowerCase();
   const order = sql_sanitize(order_In).toLowerCase();
@@ -118,6 +120,7 @@ const fetchArticles = (topic_In = "", sort_In = "created_at",order_In = "desc") 
           });
       }
 
+
     const sort_by_choices = ['author','title','article_id','topic',
                              'created_at','votes','comment_count'];
     if (!sort_by_choices.includes(sort_by)){
@@ -130,6 +133,7 @@ const fetchArticles = (topic_In = "", sort_In = "created_at",order_In = "desc") 
     }
     
     const query = `SELECT articles.article_id  ,
+
        articles.author ,
        articles.title ,
        articles.topic ,
@@ -142,17 +146,17 @@ const fetchArticles = (topic_In = "", sort_In = "created_at",order_In = "desc") 
        WHERE articles.topic LIKE \'%${topic}%\'
        GROUP BY articles.article_id
        ORDER BY ${sort_by} ${order}  ; `;
+
    
     return db.query(query).then(({ rows: articles }) => {
         return articles;
        }).catch((err) => {
            console.log("err = " , err.toString());
             return Promise.reject(err);
-       });        
-    });
-};
-    
-         
+       });
+        
+    })
+}
 
 
 const fetchComments = (article_id) => {
@@ -253,7 +257,90 @@ const removeComment = (comment_id) => {
         });
 };
 
+const fetchApi = () => {
+  const api = [
+    {
+      http: "get",
+      endpoint: "/api/topics",
+      description: `Responds with: an array of topic objects, each of which should have the following properties: slug , description`,
+    },
+    { http: "get", endpoint: "/api/articles/:article_id", description: `Responds with:
 
+an article object, which should have the following properties:
+
+author which is the username from the users table
+title
+article_id
+body
+topic
+created_at
+votes` },
+    { http: "get", endpoint: "/api/users", description: `Responds with:
+
+an array of objects, each object should have the following property:
+username
+name
+avatar_url` },
+    { http: "patch", endpoint: "/api/articles/:article_id", description: `Request body accepts:
+an object in the form { inc_votes: newVote }
+newVote will indicate how much the votes property in the database should be updated by
+e.g.
+{ inc_votes : 1 } would increment the current article's vote property by 1
+{ inc_votes : -100 } would decrement the current article's vote property by 100
+Responds with:
+the updated article.
+An article response object should also now include:
+
+-comment_count which is the total count of all the comments with this article_id - you should make use of queries to the database in order to achieve this.` },
+    { http: "get", endpoint: "/api/articles", description: `Responds with:
+
+an articles array of article objects, each of which should have the following properties:
+
+author which is the username from the users table
+title
+article_id
+topic
+created_at
+votes
+comment_count which is the total count of all the comments with this article_id - you should make use of queries to the database in order to achieve this.
+the articles should be sorted by date in descending order.
+
+Queries
+The end point should also accept the following query:
+- topic, which filters the articles by the topic value specified in the query. If the query is omitted the endpoint should respond with all articles.` },
+    { http: "get", endpoint: "/api/articles/:article_id/comments", description: `Responds with:
+
+an array of comments for the given article_id of which each comment should have the following properties:
+comment_id
+votes
+created_at
+author which is the username from the users table
+body
+comments should be served with the most recent comments first` },
+    { http: "post", endpoint: "/api/articles/:article_id/comments", description: `Request body accepts:
+
+an object with the following properties:
+username
+body
+Responds with:
+
+the posted comment` },
+    { http: "get", endpoint: "/api/articles", description: `FEATURE REQUEST
+The end point should also accept the following queries:
+
+sort_by, which sorts the articles by any valid column (defaults to date)
+order, which can be set to asc or desc for ascending or descending (defaults to descending)
+` },
+    { http: "delete", endpoint: "/api/comments/:comment_id", description: `Should:
+
+delete the given comment by comment_id
+Responds with:
+
+status 204 and no content` },
+  ];
+    
+  return Promise.resolve({ api });
+};
 
 
 module.exports = {
@@ -262,5 +349,6 @@ module.exports = {
     adjustArticle ,
     fetchComments ,
     putComment,
-    removeComment
+    removeComment,
+    fetchApi
 };

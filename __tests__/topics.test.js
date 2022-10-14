@@ -283,6 +283,7 @@ describe("Articles api testing /api/articles ", () => {
 
             });
     });
+
     
     const sort_by_choices = ['author','title','article_id','topic',
                              'created_at','votes','comment_count'];
@@ -294,7 +295,6 @@ describe("Articles api testing /api/articles ", () => {
                 .expect(400)
                 .then(({ body }) => {
                     const { msg } = body;
-                                        
                 });
     });
 
@@ -306,7 +306,6 @@ describe("Articles api testing /api/articles ", () => {
                 .expect(400)
                 .then(({ body }) => {
                     const { msg } = body;
-                                        
                 });
     });
     
@@ -632,8 +631,6 @@ describe('POST /api/articles/:article_id/comments', () => {
                 expect(msg).toBe(`The ':article_id' should be a number POST in request to /api/articles/:article_id/comments`);
             });
     });
-
-    
 });
 
 
@@ -660,4 +657,188 @@ describe('DELETE /api/comments/:comment_id', () => {
     });
     
 });
+
+
+describe("GET /api", () => {
+  test("returns 200 success", () => {
+    return request(app).get("/api").expect(200);
+  });
+
+  test("returns list of endpoints and description ", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+          .then(({ body }) => {
+              
+        const { msg } = body;
+
+        const apis = msg.api;
+
+        apis.forEach((api) => {
+          expect(api).toMatchObject({
+            http: expect.any(String),
+            description: expect.any(String),
+            endpoint: expect.any(String),
+          });
+        });
+      });
+  });
+});
+
+
+
+describe("User api testing", () => {
+  test("GET single user /api/users/:username", () => {
+    return request(app).get("/api/users/butter_bridge").expect(200);
+  });
+
+  const users = ["butter_bridge", "icellusedkars", "rogersop", "lurker"];
+  users.forEach(function (user) {
+    test(`GET the response and status of /api/users/${user}`, () => {
+      return request(app)
+        .get(`/api/users/${user}`)
+        .expect(200)
+        .then(({ body }) => {
+          const { user } = body;
+
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+    });
+  });
+
+  test("GET non existent user /api/users/jackson", () => {
+    return request(app)
+      .get("/api/users/jackson")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe(`username not found in database`);
+      });
+  });
+});
+
+
+
+// in order to see if patch is working , need to be able to get comment first
+describe('Ticket # 18-A GET /api/comments/:comment_id', () => {
+
+    test("GET comment with comment_id of 1 /api/comments/1 expect 200", () => {
+        return request(app).get("/api/comments/2").expect(200);
+    });
+
+    for (let comment_id = 2 ; comment_id < 13 ; comment_id ++ ) {
+        test(`GET the response and status of /api/comments/${comment_id}`, () => {
+        return request(app)
+            .get(`/api/comments/${comment_id}`)
+            .expect(200)
+            .then(({ body }) => {
+                const { comment } = body;
+
+                    expect(comment).toMatchObject({
+                        comment_id: comment_id,
+                        votes: expect.any(Number),
+                        created_at: expect.any(String),
+                        author: expect.any(String),
+                        body: expect.any(String)
+                });
+            });
+    });
+    }
+
+    test("get comment using invalid comment_id - should be a number", () => {
+        return request(app)
+            .get("/api/comments/dog")
+            .expect(400)
+            .then(({ body }) => {
+                const { msg } = body;
+                expect(msg).toBe(`'comment_id' in /api/comments/:comment_id is expected to be a number`);
+            });
+    });  
+
+    test("get comment using comment_id not in database", () => {
+        const comment_id = 999;
+        return request(app)
+            .get(`/api/comments/${comment_id}`)
+            .expect(400)
+            .then(({ body }) => {
+                const { msg } = body;
+                expect(msg).toBe(`Comment not found for comment_id given`);
+            });
+    });  
+    
+});
+
+
+
+describe("Ticket # 18 PATCH /api/comments/:comment_id", () => {
+  test("status:201, responds with the updated comment", () => {
+    const commentUpdate = {
+      inc_votes: 100,
+    };
+    let original_votes;
+
+    return request(app)
+      .get("/api/comments/2")
+      .expect(200)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment.comment_id).toBe(2);
+        original_votes = comment.votes;
+      })
+      .then(() => {
+        return request(app)
+          .patch("/api/comments/2")
+          .send(commentUpdate)
+          .expect(201)
+          .then(({ body }) => {
+            const { comment } = body;
+              
+            const incremented_votes = original_votes + commentUpdate.inc_votes;
+            expect(comment.comment_id).toBe(2);
+            expect(comment.votes).toBe(incremented_votes);
+          });
+      });
+  });
+
+  test("status:400, bad request on invalid comment_id", () => {
+    const commentUpdate = {
+      inc_votes: 100,
+    };
+    return request(app)
+      .patch("/api/comments/dog")
+      .send(commentUpdate)
+      .expect(400);
+  });
+
+  test("status:400, bad comment update object inc_votes not a number", () => {
+    const commentUpdate = {
+      inc_votes: "dog",
+    };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(commentUpdate)
+      .expect(400);
+  });
+
+  test("status:400, bad comment update object inc_votes mis-spelled", () => {
+    const commentUpdate = {
+      inc_voters: 250,
+    };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(commentUpdate)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe(
+          "patch request requires 'inc_votes' json to be defined"
+        );
+      });
+  });
+});
+
 
