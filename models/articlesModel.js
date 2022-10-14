@@ -154,8 +154,9 @@ const fetchArticles = (topic_In = "" , sort_In = "created_at" , order_In = "desc
            console.log("err = " , err.toString());
             return Promise.reject(err);
        });
-
-};
+        
+    })
+}
 
 
 const fetchComments = (article_id) => {

@@ -284,30 +284,6 @@ describe("Articles api testing /api/articles ", () => {
             });
     });
 
-    test("topic of cooking - articles should only involve cooking", () => {
-
-        return request(app)
-            .get("/api/articles?topic=cooking")
-            .expect(200)
-            .then(({ body }) => {
-                const { articles } = body;
-                
-                articles.forEach((article) => {
-                    expect(article).toMatchObject({
-                        article_id: expect.any(Number),
-                        title: expect.any(String),
-                        topic: 'cooking',
-                        author: expect.any(String),
-                        body: expect.any(String),
-                        created_at: expect.any(String),
-                        votes: expect.any(Number),
-                        comment_count: expect.any(Number),
-                    });
-                });
-            });
-    });
-    
-
     
     const sort_by_choices = ['author','title','article_id','topic',
                              'created_at','votes','comment_count'];
@@ -319,8 +295,6 @@ describe("Articles api testing /api/articles ", () => {
                 .expect(400)
                 .then(({ body }) => {
                     const { msg } = body;
-                    
-                    expect(msg).toBe(`sort_by query parameter should be one of ${sort_by_choices} in GET request to /api/articles`)
                 });
     });
 
@@ -332,8 +306,6 @@ describe("Articles api testing /api/articles ", () => {
                 .expect(400)
                 .then(({ body }) => {
                     const { msg } = body;
-                    
-                    expect(msg).toBe(`order query parameter should be one of ${order_choices} asc to mean ascending / desc to mean descending in GET request to /api/articles`);
                 });
     });
     
