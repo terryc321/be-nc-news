@@ -93,7 +93,7 @@ At the top of your `connection.js`, assign the value of the NODE_ENV to a variab
 const ENV = process.env.NODE_ENV || 'development';
 ```
 
-It is important to check that we have either the development/test PGDATABASE variable or the production DATABASE_URL. If both are missing from the `process.env`, then throw an error.
+It is important to check that we have either the development/xtest PGDATABASE variable or the production DATABASE_URL. If both are missing from the `process.env`, then throw an error.
 
 ```js
 if (!process.env.PGDATABASE && !process.env.DATABASE_URL) {
@@ -127,7 +127,7 @@ Now, **run the seed prod script** that you added to your `package.json` earlier:
 npm run seed:prod
 ```
 
-It should check whether you're in production, and if you are, it should connect to the production database. Otherwise it will connect to the test or development database specified in your (`.gitignore`'d) `.env` files.
+It should check whether you're in production, and if you are, it should connect to the production database. Otherwise it will connect to the xtest or development database specified in your (`.gitignore`'d) `.env` files.
 
 ## 7. Use Heroku's PORT
 

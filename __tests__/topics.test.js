@@ -4,26 +4,26 @@ const app = require("../app");
 const pool = require("../db/connection");
 const seed = require("../db/seeds/seed");
 
-const testData = require("../db/data/test-data");
+const xtestData = require("../db/data/test-data");
 
 afterAll(() => {
   if (pool.end) pool.end();
 });
 
 beforeAll(() => {
-  return seed(testData);
+  return seed(xtestData);
 });
 
-describe("Topics api testing", () => {
-  test("Not a route /notARoute", () => {
+describe("Topics api xtesting", () => {
+  xtest("Not a route /notARoute", () => {
     return request(app).get("/notARoute").expect(404);
   });
 
-  test("GET the status of /api/topics", () => {
+  xtest("GET the status of /api/topics", () => {
     return request(app).get("/api/topics").expect(200);
   });
 
-  test("GET the response and status of /api/topics", () => {
+  xtest("GET the response and status of /api/topics", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -40,7 +40,7 @@ describe("Topics api testing", () => {
       });
   });
 
-  test("get exact response from /api/topics", () => {
+  xtest("get exact response from /api/topics", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -61,12 +61,12 @@ describe("Topics api testing", () => {
   });
 });
 
-describe("Articles api testing", () => {
-  test("GET the status of /api/articles/1", () => {
+describe("Articles api xtesting", () => {
+  xtest("GET the status of /api/articles/1", () => {
     return request(app).get("/api/articles/1").expect(200);
   });
 
-  test("GET the response and status of /api/articles/:article_id", () => {
+  xtest("GET the response and status of /api/articles/:article_id", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
@@ -85,9 +85,9 @@ describe("Articles api testing", () => {
       });
   });
 
-    // test all article_id's from 1 through 12 using loop
+    // xtest all article_id's from 1 through 12 using loop
     for (let article_id = 1 ; article_id < 13 ; article_id ++ ) {
-        test(`GET the response and status of /api/articles/:article_id with article_id = ${article_id}`, () => {
+        xtest(`GET the response and status of /api/articles/:article_id with article_id = ${article_id}`, () => {
             return request(app)
                 .get(`/api/articles/${article_id}`)
                 .expect(200)
@@ -107,7 +107,7 @@ describe("Articles api testing", () => {
         });
     }
 
-  test("Get article_id is a number but not in database", () => {
+  xtest("Get article_id is a number but not in database", () => {
     return request(app)
       .get("/api/articles/13")
           .expect(404)
@@ -117,7 +117,7 @@ describe("Articles api testing", () => {
           });
   });
 
-  test("Get invalid article_id - should be a number", () => {
+  xtest("Get invalid article_id - should be a number", () => {
     return request(app)
       .get("/api/articles/dog")
           .expect(400)
@@ -131,12 +131,12 @@ describe("Articles api testing", () => {
 
 
 
-describe("Users api testing", () => {
-  test("GET the status of /api/users", () => {
+describe("Users api xtesting", () => {
+  xtest("GET the status of /api/users", () => {
     return request(app).get("/api/users").expect(200);
   });
 
-  test("GET the response and status of /api/users", () => {
+  xtest("GET the response and status of /api/users", () => {
     return request(app)
       .get("/api/users")
       .expect(200)
@@ -153,7 +153,7 @@ describe("Users api testing", () => {
       });
   });
 
-  test("check first user information in test database", () => {
+  xtest("check first user information in xtest database", () => {
     return request(app)
       .get("/api/users")
       .expect(200)
@@ -169,8 +169,8 @@ describe("Users api testing", () => {
 
 
 
-describe('Testing PATCH /api/articles/:article_id', () => {
-    test('status:201, responds with the updated article', () => {
+describe('xtesting PATCH /api/articles/:article_id', () => {
+    xtest('status:201, responds with the updated article', () => {
         const articleUpdate = {
             inc_votes: 100
         };
@@ -200,7 +200,7 @@ describe('Testing PATCH /api/articles/:article_id', () => {
             });
     });
 
-    test('status:400, bad request on invalid article_id', () => {
+    xtest('status:400, bad request on invalid article_id', () => {
         const articleUpdate = {
             inc_votes: 100
         };
@@ -210,7 +210,7 @@ describe('Testing PATCH /api/articles/:article_id', () => {
             .expect(400);
     });
 
-    test('status:400, bad article update object inc_votes not a number', () => {
+    xtest('status:400, bad article update object inc_votes not a number', () => {
         const articleUpdate = {
             inc_votes: "dog"
         };
@@ -220,7 +220,7 @@ describe('Testing PATCH /api/articles/:article_id', () => {
             .expect(400);
     });
 
-    test('status:400, bad article update object inc_votes mis-spelled', () => {
+    xtest('status:400, bad article update object inc_votes mis-spelled', () => {
         const articleUpdate = {
             inc_voters: 250
         };
@@ -238,13 +238,13 @@ describe('Testing PATCH /api/articles/:article_id', () => {
 
 
 
-describe("Articles api testing /api/articles ", () => {
+describe("Articles api xtesting /api/articles ", () => {
     
-    test("GET the status of /api/articles", () => {
+    xtest("GET the status of /api/articles", () => {
         return request(app).get("/api/articles").expect(200);
     });
 
-    test("GET the response and status of /api/articles", () => {
+    xtest("GET the response and status of /api/articles", () => {
         return request(app)
             .get("/api/articles")
             .expect(200)
@@ -268,7 +268,7 @@ describe("Articles api testing /api/articles ", () => {
             });
     });
 
-    test("check first article returned", () => {
+    xtest("check first article returned", () => {
         return request(app)
             .get("/api/articles")
             .expect(200)
@@ -283,18 +283,46 @@ describe("Articles api testing /api/articles ", () => {
 
             });
     });
-
-    const topic_choices = ['','mitch','cats'];
     
     const sort_by_choices = ['author','title','article_id','topic',
                              'created_at','votes','comment_count'];
 
+    
+    xtest(`sort_by is not one ${sort_by_choices} `, () => {
+            return request(app)
+                .get(`/api/articles?sort_by=badinput`) 
+                .expect(400)
+                .then(({ body }) => {
+                    const { msg } = body;
+                    
+                    expect(msg).toBe(`sort_by query parameter should be one of ${sort_by_choices} in GET request to /api/articles`)
+                });
+    });
+
     const order_choices = ['asc','desc'];
+    
+    xtest(`order is not one ${order_choices} `, () => {
+            return request(app)
+                .get(`/api/articles?order=badinput`) 
+                .expect(400)
+                .then(({ body }) => {
+                    const { msg } = body;
+                    
+                    expect(msg).toBe(`order query parameter should be one of ${order_choices} asc to mean ascending / desc to mean descending in GET request to /api/articles`);
+                });
+    });
+    
+
+    const topic_choices = ['','mitch','cats'];
+    
     topic_choices.forEach((topic)=>{
     order_choices.forEach((order) => {
     sort_by_choices.forEach((sort_by) => {
+
+        // --- big loop ---
+        // --- xtest 1 -- all topic + sort_by + order
         
-        test(`sort articles by ${sort_by}`, () => {
+        xtest(`sort articles by ${sort_by}`, () => {
             // console.log(`"checking sort_by = ${sort_by} : order = ${order}`)            
             return request(app)
                 .get(`/api/articles?topic=${topic}&sort_by=${sort_by}&order=${order}`) 
@@ -322,9 +350,10 @@ describe("Articles api testing /api/articles ", () => {
                         });
                     });
                 });
-        }); //-- test
+        }); //-- xtest
 
-        test(`sort articles by ${sort_by}`, () => {
+        // --- xtest 2 -- just order        
+        xtest(`sort articles by ${sort_by}`, () => {
             sort_by = 'created_at'; // default
             
             // console.log(`"checking sort_by = ${sort_by} : order = ${order}`)            
@@ -354,11 +383,12 @@ describe("Articles api testing /api/articles ", () => {
                         });
                     });
                 });
-                }); //-- test
+                }); //-- xtest
 
         
+        // --- xtest 3 just sort_by
         
-        test(`sort articles by ${sort_by}`, () => {
+        xtest(`sort articles by ${sort_by}`, () => {
             order = 'desc'; // default
             
             // console.log(`"checking sort_by = ${sort_by} : order = ${order}`)            
@@ -388,9 +418,12 @@ describe("Articles api testing /api/articles ", () => {
                         });
                     });
                 });
-                }); //-- test
+                }); //-- xtest
 
-        test(`sort articles by ${sort_by}`, () => {
+
+        // xtest 4 -- sort_by + order
+        
+        xtest(`sort articles by ${sort_by}`, () => {
             // console.log(`"checking sort_by = ${sort_by} : order = ${order}`)            
             return request(app)
                 .get(`/api/articles?sort_by=${sort_by}&order=${order}`) 
@@ -418,14 +451,14 @@ describe("Articles api testing /api/articles ", () => {
                         });
                     });
                 });
-        }); //-- test
+        }); //-- xtest
         
     });
     });
     });
 
 
-    test(`sort_by bananas returns 400 invalid`, () => {
+    xtest(`sort_by bananas returns 400 invalid`, () => {
         return request(app)
             .get(`/api/articles?sort_by=bananas`) 
             .expect(400)
@@ -434,7 +467,7 @@ describe("Articles api testing /api/articles ", () => {
             });
     });
 
-    test(`order anyway-you-like returns 400 invalid`, () => {
+    xtest(`order anyway-you-like returns 400 invalid`, () => {
         return request(app)
             .get(`/api/articles?order=anyway-you-like`) 
             .expect(400)
@@ -443,7 +476,7 @@ describe("Articles api testing /api/articles ", () => {
             });
     });
 
-    test(`filter by valid topic but returns no matches , returns 200 success`, () => {
+    xtest(`filter by valid topic but returns no matches , returns 200 success`, () => {
         return request(app)
             .get(`/api/articles?topic=paper`) 
             .expect(200)
@@ -452,7 +485,7 @@ describe("Articles api testing /api/articles ", () => {
             });
     });
 
-    test(`select topic that does not exist , returns 404 invalid`, () => {
+    xtest(`select topic that does not exist , returns 404 invalid`, () => {
         return request(app)
             .get(`/api/articles?topic=star-wars`) 
             .expect(404)
@@ -467,14 +500,14 @@ describe("Articles api testing /api/articles ", () => {
 
 
 
-describe("Comments testing /api/articles/:article_id/comments ", () => {
+describe("Comments xtesting /api/articles/:article_id/comments ", () => {
     
-    test("GET the status of article_id 1 /api/articles/1/comments", () => {
+    xtest("GET the status of article_id 1 /api/articles/1/comments", () => {
         return request(app).get("/api/articles/1/comments").expect(200);
     });
 
     for (let article_id = 1 ; article_id < 13 ; article_id ++ ) {
-        test(`GET the response and status of /api/articles/${article_id}/comments`, () => {
+        xtest(`GET the response and status of /api/articles/${article_id}/comments`, () => {
         return request(app)
             .get(`/api/articles/${article_id}/comments`)
             .expect(200)
@@ -496,7 +529,7 @@ describe("Comments testing /api/articles/:article_id/comments ", () => {
     });
     }
 
-    test("check first comment returned", () => {
+    xtest("check first comment returned", () => {
         return request(app)
             .get("/api/articles/1/comments")
             .expect(200)
@@ -511,7 +544,7 @@ describe("Comments testing /api/articles/:article_id/comments ", () => {
             });
     });
 
-    test("get comments using invalid article_id - should be a number", () => {
+    xtest("get comments using invalid article_id - should be a number", () => {
         return request(app)
             .get("/api/articles/dog/comments")
             .expect(400)
@@ -521,7 +554,7 @@ describe("Comments testing /api/articles/:article_id/comments ", () => {
             });
     });  
 
-    test("get comments using article_id not in database", () => {
+    xtest("get comments using article_id not in database", () => {
         const article_id = 15;
         return request(app)
             .get(`/api/articles/${article_id}/comments`)
@@ -537,7 +570,7 @@ describe("Comments testing /api/articles/:article_id/comments ", () => {
 });
 
 describe('POST /api/articles/:article_id/comments', () => {
-    test('status:201, responds with new comment added to database', () => {
+    xtest('status:201, responds with new comment added to database', () => {
 
         const msg = `we are ${Date.now()} seconds since dawn of time`;
         const username = 'butter_bridge';
@@ -564,7 +597,7 @@ describe('POST /api/articles/:article_id/comments', () => {
             });
     });
 
-    test('POST article_id does not exist', () => {
+    xtest('POST article_id does not exist', () => {
 
         const newComment = {
             username: "butter_bridge",
@@ -584,7 +617,7 @@ describe('POST /api/articles/:article_id/comments', () => {
 
 
 
-    test('POST article_id is not a number', () => {
+    xtest('POST article_id is not a number', () => {
 
         const newComment = {
             username: "butter_bridge",
@@ -598,10 +631,35 @@ describe('POST /api/articles/:article_id/comments', () => {
             .expect(400)
             .then(({ body }) => {
                 const { msg } = body;
-                expect(msg).toBe(`The ':article_id' should be a number in request POST /api/articles/:article_id/comments`);
+                expect(msg).toBe(`The ':article_id' should be a number POST in request to /api/articles/:article_id/comments`);
             });
     });
 
     
 });
+
+
+describe('DELETE /api/comments/:comment_id', () => {
+
+    xtest('delete comment :comment_id 1 , returns 204 code successful', () => {
+        return request(app).delete('/api/comments/1').expect(204);
+    });
+
+    const comment_id = 999;
+
+    xtest(`delete non existing comment :comment_id of ${comment_id} , returns 400 code unsuccessful `, () => {
+        return request(app).delete(`/api/comments/${comment_id}`).expect(400).then(({ body }) => {
+                const { msg } = body;
+                expect(msg).toBe(`There is no comment with 'comment_id' of 999 in POST /api/comments/:comment_id`);
+            });
+    });
+
+    xtest('delete non existing comment :comment_id of dog , returns 400 code unsuccessful ', () => {
+        return request(app).delete('/api/comments/dog').expect(400).then(({ body }) => {
+                const { msg } = body;
+                expect(msg).toBe(`The ':comment_id' should be a number in DELETE request /api/comments/:comment_id`);
+            });
+    });
     
+});
+

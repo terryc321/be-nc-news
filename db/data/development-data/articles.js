@@ -149,7 +149,7 @@ module.exports = [
     title: "Who are the most followed clubs and players on Instagram?",
     topic: "football",
     author: "jessjelly",
-    body: "Manchester United are the UK's most popular club on Instagram, with over 14m people following their account for their latest photos and videos. United's total number of followers is over six million more than second-placed Arsenal (8.1m, while Chelsea are third on the list with 7.7m followers, according to data exclusively compiled for Sky Sports. Instagram has a 500m-strong community, with one in three people on the social media site (around 165m) following a sports account.",
+    body: "Manchester United are the UK's most popular club on Instagram, with over 14m people following their account for their laxtest photos and videos. United's total number of followers is over six million more than second-placed Arsenal (8.1m, while Chelsea are third on the list with 7.7m followers, according to data exclusively compiled for Sky Sports. Instagram has a 500m-strong community, with one in three people on the social media site (around 165m) following a sports account.",
     created_at: 1600002120000,
     votes: 0,
   },

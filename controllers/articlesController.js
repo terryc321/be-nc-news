@@ -2,7 +2,8 @@ const { fetchArticles ,
         fetchArticle ,
         adjustArticle ,
         fetchComments ,
-        putComment
+        putComment ,
+        removeComment
       } = require("../models/articlesModel");
 
 const getArticle = (req, res, next) => {
@@ -44,11 +45,19 @@ const postComment = (req, res, next) => {
         .catch((err) => next(err));
 };
 
+const deleteComment = (req, res, next) => {
+    const { comment_id } = req.params;    
+    removeComment(comment_id).then(
+        comment =>  res.status(204).send({comment})
+    ).catch(err => next(err));
+};
+
 
 module.exports = {
     getArticles ,
     getArticle,
     patchArticle,
     getComments ,
-    postComment
+    postComment ,
+    deleteComment
 };
