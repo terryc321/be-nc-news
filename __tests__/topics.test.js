@@ -284,29 +284,6 @@ describe("Articles api testing /api/articles ", () => {
             });
     });
 
-    test("topic of cooking - articles should only involve cooking", () => {
-        return request(app)
-            .get("/api/articles?topic=cooking")
-            .expect(200)
-            .then(({ body }) => {
-                const { articles } = body;
-                
-                articles.forEach((article) => {
-                    expect(article).toMatchObject({
-                        article_id: expect.any(Number),
-                        title: expect.any(String),
-                        topic: 'cooking',
-                        author: expect.any(String),
-                        body: expect.any(String),
-                        created_at: expect.any(String),
-                        votes: expect.any(Number),
-                        comment_count: expect.any(Number),
-                    });
-                });
-            });
-    });
-
-
     const topic_choices = ['','mitch','cats'];
     
     const sort_by_choices = ['author','title','article_id','topic',
@@ -446,6 +423,44 @@ describe("Articles api testing /api/articles ", () => {
     });
     });
     });
+
+
+    test(`sort_by bananas returns 400 invalid`, () => {
+        return request(app)
+            .get(`/api/articles?sort_by=bananas`) 
+            .expect(400)
+            .then(({ body }) => {
+                const { msg } = body;                
+            });
+    });
+
+    test(`order anyway-you-like returns 400 invalid`, () => {
+        return request(app)
+            .get(`/api/articles?order=anyway-you-like`) 
+            .expect(400)
+            .then(({ body }) => {
+                const { msg } = body;
+            });
+    });
+
+    test(`filter by valid topic but returns no matches , returns 200 success`, () => {
+        return request(app)
+            .get(`/api/articles?topic=paper`) 
+            .expect(200)
+            .then(({ body }) => {
+                const { msg } = body;
+            });
+    });
+
+    test(`select topic that does not exist , returns 404 invalid`, () => {
+        return request(app)
+            .get(`/api/articles?topic=star-wars`) 
+            .expect(404)
+            .then(({ body }) => {
+                const { msg } = body;
+            });
+    });
+    
     
 }); // describe end
 
