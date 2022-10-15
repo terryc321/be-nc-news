@@ -1,8 +1,15 @@
 
-/*
+const psql_codes = require('./postgres-codes');
+
+const hasPSQLReason = (code) => {
+    const result = psql_codes[code];
+    return result ? result : null;    
+}
+
+
 const handleJSErrors = (err, req, res, next) => {
   if (err.status && err.msg) {
-      res.status(400).send({ msg : err.msg });
+      res.status(err.status).send({ msg : err.msg });
   } else {
     next(err);
   }
@@ -10,8 +17,9 @@ const handleJSErrors = (err, req, res, next) => {
 
 
 const handlePSQLErrors = (err, req, res, next) => {
-  if (err.status === '22P02') {
-      res.status(400).send({ msg : err.message || 'Bad Request' });
+    const psqlErr = psql_codes[code];    
+  if (err.status === code) {
+      res.status(400).send({ msg : err.message , psql : psqlErr });
   } else {
     next(err);
   }
@@ -21,13 +29,12 @@ const handleServerErrors = (err, req, res, next) => {
     res.status(500).send({ msg : 'Internal Server Error' });
 };
 
-*/
 
 const handleErrors = (err, req, res, next) => {
     if (err.status && err.msg) {
         res.status(err.status).send({ msg: err.msg });
-  } else if (err.status === "22P02") {
-      res.status(400).send({ msg: err.message || "Bad Request" });
+    } else if (hasPSQLReason(err.status)){
+        res.status(400).send({ msg: err.message || "Bad Request" });
   } else {
       res.status(500).send({ msg: "Internal Server Error" });
   }
