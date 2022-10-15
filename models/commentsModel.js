@@ -10,6 +10,19 @@ const adjustComment = (comment_id, inc_votes) => {
     if(inc_votes === undefined){
         return Promise.reject({status : 400 , msg : "patch request requires 'inc_votes' json to be defined"});
     }
+    if(isNaN(inc_votes)){
+        return Promise.reject({ status: 400 , msg : "patch inc_votes not number"});
+    }
+
+    if(inc_votes === undefined){
+        return Promise.reject({status : 400 , msg : "patch request requires 'comment_id' json to be defined"});
+    }
+    if(isNaN(comment_id)){
+        return Promise.reject({ status: 400 , msg : "patch comment_id not number"});
+    }
+    
+    
+    
   return db
     .query(
       `UPDATE comments
@@ -28,10 +41,11 @@ const adjustComment = (comment_id, inc_votes) => {
 
 const fetchComment = (comment_id) => {
     if (comment_id === undefined) {
-        return Promise.reject({ status: 400, msg: "request requires 'comment_id' json to be defined" });
+        return Promise.reject({ status: 400, msg: `request requires 'comment_id' json to be defined` });
     }
+    
     if (isNaN(comment_id)) {
-        return Promise.reject({ status: 400, msg: "'comment_id' in /api/comments/:comment_id is expected to be a number" });
+        return Promise.reject({ status: 400, msg: `'comment_id' in /api/comments/:comment_id is expected to be a number` });
     }
 
   return db.query(`SELECT * from comments WHERE comment_id = $1 ;`, [comment_id])
@@ -39,13 +53,11 @@ const fetchComment = (comment_id) => {
         if (comments.length < 1) {
         return Promise.reject({
           status: 400,
-          msg: "Comment not found for comment_id given",
+          msg: `Comment not found for comment_id given`,
         });
       }
       return comments[0];
-    }).catch((err) => {
-      return Promise.reject(err);
-    });
+        });
 };
 
 

@@ -6,12 +6,11 @@ const sql_sanitize = (str = "") => {
 
 
 const fetchArticle = (article_id) => {
-    if (isNaN(article_id)) {
-        return Promise.reject({ status: 400, msg: "error 'article_id' in /api/articles/:article_id is expected to be a number" });
+    if(isNaN(article_id)){
+        return Promise.reject({ status: 400 , msg : "/api/articles/:article_id : article_id was not a number "});
     }
-    
-  return db
-    .query(`SELECT articles.article_id  ,
+
+    return db.query(`SELECT articles.article_id  ,
        articles.author ,
        articles.title ,
        articles.body ,
@@ -24,25 +23,33 @@ const fetchArticle = (article_id) => {
        WHERE articles.article_id = $1
        GROUP BY articles.article_id;`, [article_id])
     .then(({ rows: articles }) => {
-      if (articles.length < 1) {
+        if (articles.length < 1) {
+            
         return Promise.reject({
           status: 404,
           msg: "Article not found for article_id given",
         });
+          
       }
       return articles[0];
-    })
-    .catch((err) => {
-      return Promise.reject(err);
     });
+       
 };
+
+
 
 const adjustArticle = (article_id, inc_votes) => {
     if(inc_votes === undefined){
-        return Promise.reject({status : 400 , msg : "patch request requires 'inc_votes' json to be defined"});
+        return Promise.reject({ status: 400 , msg: "patch request requires 'inc_votes' json to be defined"});
     }
-  return db
-    .query(
+    if(isNaN(inc_votes)){
+        return Promise.reject({ status: 400 , msg : "patch inc_votes not number"});
+    }
+    if(isNaN(article_id)){
+        return Promise.reject({ status: 400 , msg : "patch article_id not number"});
+    }
+    
+  return db.query(
       `UPDATE articles
        SET votes = votes + $2
        WHERE article_id = $1
@@ -51,9 +58,8 @@ const adjustArticle = (article_id, inc_votes) => {
     )
     .then(({ rows }) => {
       return rows[0];
-    }).catch((err) => {
-        return Promise.reject(err);
-    });
+    }).catch(err => Promise.reject(err));
+    
 };
 
 
@@ -154,12 +160,9 @@ const fetchArticles = (topic_In = "" , sort_In = "created_at" , order_In = "desc
    
     return db.query(query).then(({ rows: articles }) => {
         return articles;
-       }).catch((err) => {
-           return Promise.reject(err);
-       });
-        
-    })
-}
+    });
+    });
+};
 
 
 const fetchComments = (article_id) => {

@@ -13,11 +13,13 @@ const patchComment = (req, res, next) => {
     ).catch(next);
 };
 
-
+// **** ticket 18
 const getComment = (req, res, next) => {
-  const { comment_id } = req.params;    
-  fetchComment(comment_id).then((comment) => res.status(200).send({ comment }))
-        .catch((err) => next(err));
+    const { comment_id } = req.params;
+    
+    fetchComment(comment_id).then(
+        comment => res.status(200).send({ comment })
+    ).catch(next);
 };
 
 
@@ -25,3 +27,4 @@ module.exports = {
     patchComment,
     getComment
 };
+
