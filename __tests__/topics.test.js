@@ -123,7 +123,7 @@ describe("Articles api testing", () => {
           .expect(400)
           .then(({ body }) => {
               const { msg } = body;
-              expect(msg.startsWith('error: invalid input syntax for type integer')).toBe(true);
+              expect(msg).toBe("error 'article_id' in /api/articles/:article_id is expected to be a number");
           }); 
   });  
    

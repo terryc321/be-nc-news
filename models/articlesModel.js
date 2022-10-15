@@ -6,6 +6,10 @@ const sql_sanitize = (str = "") => {
 
 
 const fetchArticle = (article_id) => {
+    if (isNaN(article_id)) {
+        return Promise.reject({ status: 400, msg: "error 'article_id' in /api/articles/:article_id is expected to be a number" });
+    }
+    
   return db
     .query(`SELECT articles.article_id  ,
        articles.author ,
@@ -151,8 +155,7 @@ const fetchArticles = (topic_In = "" , sort_In = "created_at" , order_In = "desc
     return db.query(query).then(({ rows: articles }) => {
         return articles;
        }).catch((err) => {
-           console.log("err = " , err.toString());
-            return Promise.reject(err);
+           return Promise.reject(err);
        });
         
     })
