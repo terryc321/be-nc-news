@@ -3,3 +3,4 @@ node_modules
 .projectile
 .log/*
 hidden
+dev-branch.kdev4
