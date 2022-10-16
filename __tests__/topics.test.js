@@ -845,4 +845,11 @@ describe("Ticket # 18 PATCH /api/comments/:comment_id", () => {
   });
 });
 
+describe("postgres codes checking", () => {
+  test("#TID 51/1# testing postgres failover", () => {
+    return request(app).get("/badSql").expect(404);
+  });
+});
+
+
 

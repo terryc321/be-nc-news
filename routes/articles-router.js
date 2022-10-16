@@ -7,16 +7,15 @@ const { getArticles,
         patchArticle,
         getComments,
         postComment,
-        deleteComment,
-        getApi,
       } = require("../controllers/articlesController");
 
+/*
 const { getUsers ,
         getUser} = require("../controllers/usersController");
 
 const { patchComment ,
       getComment } = require("../controllers/commentsController");
-
+*/
 const router = require('express').Router();
 
 // *** GET /api/articles

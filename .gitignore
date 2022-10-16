@@ -4,3 +4,8 @@ node_modules
 .log/*
 hidden
 dev-branch.kdev4
+.eslintrc
+.eslintrc.js
+
+
+

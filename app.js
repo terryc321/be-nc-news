@@ -1,3 +1,5 @@
+
+
 const express = require("express");
 const app = express();
 
@@ -12,6 +14,12 @@ const apiRouter = require('./routes/api-router');
 
 
 app.use(express.json());
+
+/*
+app.use('/badSql',(req,res,next) => {
+    
+});
+*/
 
 app.use('/api', apiRouter);
 
