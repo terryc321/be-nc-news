@@ -30,3 +30,14 @@ DELETE /api/comments/:comment_id
 GET /api
 ```
 
+
+## Tests
+
+Tests are found in the __tests__ folder. 
+
+These tests are designed to ensure endpoints are running as they should
+
+To run the test suite :
+
+npm test
+
