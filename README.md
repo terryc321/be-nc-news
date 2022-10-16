@@ -6,7 +6,8 @@ This is an news API using Postgres as the database backend
 
 ## Hosted version
 
-You can see the hosted version at https://mr-kipling-nc-news-backend.herokuapp.com/api
+You can see the hosted version at [link](https://mr-kipling-nc-news-backend.herokuapp.com/api){:target="_blank"}
+
 
 ## Endpoints
 
