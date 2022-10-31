@@ -1,5 +1,4 @@
 # News API
-
 ## Background
 
 This is an news API using Postgres as the database backend
